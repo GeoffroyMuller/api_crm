@@ -10,6 +10,7 @@ export default class Quote extends Model {
    idCompany?: number;
    identifier?: string;
    name?: string;
+   lines?: Array<QuoteLine>
 
 
     static get tableName() {
