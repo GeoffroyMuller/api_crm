@@ -9,6 +9,7 @@ export default class User extends Model {
     phone?: string
     email?: string
     password?: string
+    idCompany?: number;
 
     $formatJson(json: Pojo): Pojo {
         json = super.$formatJson(json)

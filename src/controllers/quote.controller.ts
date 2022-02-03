@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { IAuthRequest } from "../middlewares/auth.middleware";
+import User from "../models/user.model";
 import QuoteService from "../services/quote.service";
 
 async function findAll(req: IAuthRequest, res: Response) {
@@ -13,7 +14,7 @@ async function getById(req: IAuthRequest, res: Response) {
 }
 
 async function create(req: IAuthRequest, res: Response) {
-    res.json(await QuoteService.create(req.body))
+    res.json(await QuoteService.create(req.body, req.auth as User))
 }
 
 async function update(req: IAuthRequest, res: Response) {
