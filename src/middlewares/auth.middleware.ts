@@ -7,23 +7,9 @@ export interface IAuthRequest extends Request {
     auth?: User;
 }
 
-export default class AuthMiddleware {
-
-    static async verify(req: IAuthRequest, res: Response, next: NextFunction): Promise<void> {
-        const token = req.headers.authorization || req.cookies.token || req.query.token as string;
-        const auth = await AuthService.verify(token);
-        if (auth) {
-            req['auth'] = auth;
-            next();
-        } else {
-            res.cookie('token', '');
-            res.status(403).end();
-        }
-    }
-}
-/* export default async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export default async function authMiddleware(req: IAuthRequest, res: Response, next: NextFunction) {
     const token = req.headers.authorization || req.cookies.token || req.query.token as string;
-    const auth = await verify(token);
+    const auth = await AuthService.verify(token);
     if (auth) {
         req['auth'] = auth;
         next();
@@ -31,4 +17,4 @@ export default class AuthMiddleware {
         res.cookie('token', '');
         res.status(403).end();
     }
-} */
+}
