@@ -1,8 +1,7 @@
 require('dotenv').config();
 import bodyParser from 'body-parser';
-import express, {Application} from 'express'
-import './config/database';
-
+import express, { Application } from 'express'
+import './config/database'
 
 import Routes from './routes';
 

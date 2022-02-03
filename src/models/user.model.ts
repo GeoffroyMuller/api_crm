@@ -2,6 +2,14 @@ import { Model, Pojo } from "objection"
 
 export default class User extends Model {
 
+    id?: number
+    firstname?: string
+    lastname?: string
+    address?: string
+    phone?: string
+    email?: string
+    password?: string
+
     $formatJson(json: Pojo): Pojo {
         json = super.$formatJson(json)
         delete json.password
