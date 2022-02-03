@@ -17,7 +17,7 @@ export default class Quote extends Model {
     }
 
     static relationMappings = {
-        parts: {
+        lines: {
             relation: Model.HasManyRelation,
             modelClass: QuoteLine,
             join: {
