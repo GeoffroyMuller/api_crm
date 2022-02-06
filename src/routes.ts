@@ -4,6 +4,7 @@ import ClientController from "./controllers/client.controller";
 import CompanyController from "./controllers/company.controller";
 import QuoteController from "./controllers/quote.controller";
 import UserController from "./controllers/user.controller";
+import InvoiceController from "./controllers/invoice.controller";
 import authMiddleware from "./middlewares/auth.middleware";
 
 export default function Routes(app: Application) {
@@ -15,16 +16,22 @@ export default function Routes(app: Application) {
     app.put('/companies/:id', authMiddleware, CompanyController.update)
     app.delete('/companies/:id',authMiddleware,  CompanyController.deleteById)
     app.get('/companies/:id', authMiddleware, CompanyController.getById)
-
+    
     app.get('/quotes', authMiddleware, QuoteController.findAll)
     app.post('/quotes', authMiddleware, QuoteController.create)
     app.put('/quotes/:id', authMiddleware, QuoteController.update)
     app.delete('/quotes/:id',authMiddleware,  QuoteController.deleteById)
     app.get('/quotes/:id', authMiddleware, QuoteController.getById)
-
     app.get('/quotes/:id/pdf', QuoteController.getPdf)
+    
+    app.get('/invoices', authMiddleware, InvoiceController.findAll)
+    app.post('/invoices', authMiddleware, InvoiceController.create)
+    app.delete('/invoices/:id',authMiddleware,  InvoiceController.deleteById)
+    app.get('/invoices/:id', authMiddleware, InvoiceController.getById)
+    app.get('/invoices/:id/pdf', InvoiceController.getPdf)
 
     app.get('/users', authMiddleware, UserController.findAll)
+    app.post('/users', UserController.create)
     /*
     app.post('/users', UserController.create)
     app.put('/users/:id', UserController.update)
