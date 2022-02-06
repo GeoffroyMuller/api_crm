@@ -33,7 +33,7 @@ export default class QuoteService {
             idCompany: auth.idCompany,
             idResponsible: auth.id,
             status: 'draft'
-        }, { relate: true });
+        }, { relate: true, unrelate: true });
     }
 
     static async update(id: number, body: any) {
@@ -44,7 +44,7 @@ export default class QuoteService {
         return await Quote.query().upsertGraphAndFetch({
             id,
             ...data
-        }, { relate: true })
+        }, { relate: true, unrelate: true });
     }
 
 
