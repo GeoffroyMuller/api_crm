@@ -8,25 +8,33 @@
     <title>Devis</title>
 </head>
 
-<body>
+<body style="width:95%; margin: auto; padding-top: 15px; padding-bottom: 15px">
 
     <style>
+        body {
+            font-size: 28px;
+        }
+
         body>* {
             margin-bottom: 32px;
-            width: 85%;
-            margin: auto;
-            padding-top: 15px;
-            padding-bottom: 15px
         }
 
         .products-table {
             border-collapse: collapse;
+            width: 100%;
+            max-width: 100%;
+        }
+
+
+        .products-table thead {
+            background-color: #1976d2;
+            color: white;
         }
 
         .products-table tr,
         .products-table th,
         .products-table td {
-            width: 100%;
+
             border: 1px solid black;
             border-collapse: collapse;
         }
@@ -37,6 +45,14 @@
             border: none;
         }
 
+        
+        .products-table tfoot td:last-child {
+            border: none;
+            border: 1px solid black;
+            color: #2e7d32;
+            background-color: rgb(186, 224, 188);
+        }
+
 
         .products-table td,
         .products-table th {
@@ -44,9 +60,10 @@
         }
     </style>
 
-    <h1 style="text-align: center">
-        <%= name %>
+    <h1 style="text-align: left">
+        Devis #<%= identifier %>
     </h1>
+
     <table style="width:100%">
         <tr>
             <td width="50%" align="left">
@@ -65,16 +82,16 @@
     <table class="products-table">
         <thead>
             <tr>
-                <th>
+                <th align="left">
                     DESCRIPTION
                 </th>
-                <th align="right">
+                <th align="left">
                     QUANTITÉ
                 </th>
-                <th align="right">
+                <th "align=" left">
                     PRIX UNITAIRE
                 </th>
-                <th align="right">
+                <th align="left">
                     TOTAL
                 </th>
             </tr>
@@ -83,15 +100,15 @@
             <% lines.forEach(function(line){ %>
                 <tr>
                     <td>
-                        <%= line.description %>
+                        <pre><%= line.description %></pre>
                     </td>
-                    <td align="right">
+                    <td align="center">
                         <%= line.qty %>
                     </td>
-                    <td align="right">
+                    <td align="center">
                         <%= line.unit_price %>
                     </td>
-                    <td align="right">
+                    <td align="center">
                         <%= line.unit_price * line.qty %>
                     </td>
                 </tr>
@@ -102,7 +119,7 @@
                 <td>
 
                 </td>
-                <td align="right">
+                <td>
 
                 </td>
                 <td align="right">
@@ -110,16 +127,14 @@
                         Total :
                     </strong>
                 </td>
-                <td align="right">
+                <td align="center">
                     <%= lines.reduce((prev, curr)=> prev + (curr.unit_price * curr.qty), 0) %>
                 </td>
             </tr>
         </tfoot>
     </table>
 
-    <div>
-        <%- footer %>
-    </div>
+   
 </body>
 
 </html>

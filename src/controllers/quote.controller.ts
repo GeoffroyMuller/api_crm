@@ -5,8 +5,6 @@ import User from "../models/user.model";
 import QuoteService from "../services/quote.service";
 
 async function findAll(req: IAuthRequest, res: Response) {
-    console.log({ req })
-
     res.json(await QuoteService.findAll())
 }
 

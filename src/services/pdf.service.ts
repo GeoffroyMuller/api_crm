@@ -1,6 +1,5 @@
 var pdf = require('html-pdf');
 const fs = require('fs');
-const options = { format: 'Letter' };
 let ejs = require('ejs');
 
 export default class PdfService {
@@ -21,11 +20,19 @@ export default class PdfService {
         }
     ) {
         return new Promise((resolve, reject) => {
-
             const html = fs.readFileSync(inputPath, 'utf8');
-            console.log({html})
             const htmlReplaced: string = ejs.render(html, data);
-            
+
+            const options = {
+                "footer": {
+                    "height": "12mm",
+                    "contents": {
+                        default: data['footer']
+                            ? `<div style="text-align: center; color: rgba(0, 0, 0, 0.38);"> ${data['footer']} </div>`
+                            : ''
+                    }
+                },
+            }
 
             switch (returnType) {
                 case 'file':
@@ -41,14 +48,14 @@ export default class PdfService {
 
                     break;
                 case 'stream':
-                    pdf.create(htmlReplaced).toStream(function (err: any, stream: unknown) {
+                    pdf.create(htmlReplaced, options).toStream(function (err: any, stream: unknown) {
                         if (err) reject(err)
                         else resolve(stream)
                     });
                     break;
                 case 'buffer':
 
-                    pdf.create(htmlReplaced).toBuffer(function (err: any, buffer: any) {
+                    pdf.create(htmlReplaced, options).toBuffer(function (err: any, buffer: any) {
                         if (err) reject(err)
                         else resolve(buffer)
                     });
