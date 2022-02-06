@@ -26,14 +26,14 @@ export default class QuoteService {
 
         let identifier: string = +(lastQuote?.identifier || "") + 1 + "";
 
-
+        console.log({body})
         return await Quote.query().upsertGraphAndFetch({
             ...body,
             identifier,
             idCompany: auth.idCompany,
             idResponsible: auth.id,
             status: 'draft'
-        }, { relate: true, unrelate: true });
+        }, { relate: true });
     }
 
     static async update(id: number, body: any) {
