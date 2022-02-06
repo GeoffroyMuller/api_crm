@@ -7,19 +7,13 @@ export default class Invoice extends Model {
     id?: number;
 
     idClient?: number;
-    clientFirstname?: string
-    clientLastname?: string
-    clientAddress?: string
-    clientPhone?: string
-    clientEmail?: string
-    clientCompanyName?: string
-
     idResponsible?: number;
     idCompany?: number;
     identifier?: string;
     name?: string;
     client?: Client;
     responsible?: User;
+    jsonCopy?: string;
 
     modalities?: string;
     footer?: string;

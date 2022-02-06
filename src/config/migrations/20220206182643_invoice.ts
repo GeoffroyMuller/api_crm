@@ -10,6 +10,7 @@ export async function up(knex: Knex): Promise<void> {
         table.integer('idResponsible')
         table.integer('idCompany')
         table.string('identifier', 255)
+        table.text('jsonCopy')
         table.string('name', 255)
         table.text('modalities') 
         table.text('footer')  

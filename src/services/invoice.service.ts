@@ -1,3 +1,4 @@
+import { json } from "express";
 import Invoice from "../models/invoice.model";
 import User from "../models/user.model";
 import PdfService from "./pdf.service";
@@ -27,6 +28,7 @@ export default class InvoiceService {
             identifier,
             idCompany: auth.idCompany,
             idResponsible: auth.id,
+            jsonCopy: JSON.stringify(body),
             status: 'draft'
         }, { relate: true, unrelate: true });
 
