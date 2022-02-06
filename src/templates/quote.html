@@ -8,11 +8,15 @@
     <title>Devis</title>
 </head>
 
-<body style="width:85%; margin: auto; padding-top: 15px; padding-bottom: 15px">
+<body>
 
     <style>
         body>* {
             margin-bottom: 32px;
+            width: 85%;
+            margin: auto;
+            padding-top: 15px;
+            padding-bottom: 15px
         }
 
         .products-table {
@@ -32,7 +36,7 @@
         .products-table tfoot td {
             border: none;
         }
-       
+
 
         .products-table td,
         .products-table th {
@@ -96,10 +100,10 @@
         <tfoot>
             <tr>
                 <td>
-                   
+
                 </td>
                 <td align="right">
-                    
+
                 </td>
                 <td align="right">
                     <strong>
@@ -107,7 +111,7 @@
                     </strong>
                 </td>
                 <td align="right">
-                    <%= lines.reduce((prev, curr) => prev + (curr.unit_price * curr.qty), 0) %>
+                    <%= lines.reduce((prev, curr)=> prev + (curr.unit_price * curr.qty), 0) %>
                 </td>
             </tr>
         </tfoot>

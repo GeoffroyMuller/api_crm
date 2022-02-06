@@ -22,8 +22,8 @@ async function getPdf(req: IAuthRequest, res: Response) {
         'Content-disposition': `attachment; filename=devis_${quote?.identifier}.pdf`,
     });
 
-    const pdf: Stream = await QuoteService.getPdf(req.params.id as unknown as number, quote) as Stream
-    pdf.pipe(res)
+    const pdf: Stream = await QuoteService.getPdf(req.params.id as unknown as number, quote) as Stream;
+    pdf.pipe(res);
 
 }
 

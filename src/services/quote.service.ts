@@ -27,7 +27,7 @@ export default class QuoteService {
         let identifier: string = +(lastQuote?.identifier || "") + 1 + "";
 
 
-        return await Quote.query().insertGraphAndFetch({
+        return await Quote.query().upsertGraphAndFetch({
             ...body,
             identifier,
             idCompany: auth.idCompany,
