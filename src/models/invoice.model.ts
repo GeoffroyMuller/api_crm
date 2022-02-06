@@ -1,5 +1,6 @@
 import { Model, Pojo } from "objection";
 import Client from "./client.model";
+import InvoiceLine from "./invoiceline.model";
 import User from "./user.model";
 
 
@@ -14,6 +15,7 @@ export default class Invoice extends Model {
     client?: Client;
     responsible?: User;
     jsonCopy?: string;
+    lines?: Array<InvoiceLine>;
 
     modalities?: string;
     footer?: string;
@@ -47,6 +49,14 @@ export default class Invoice extends Model {
             join: {
                 from: 'invoices.idClient',
                 to: 'clients.id'
+            }
+        },
+        lines: {
+            relation: Model.HasManyRelation,
+            modelClass: InvoiceLine,
+            join: {
+                from: 'invoices.id',
+                to: 'invoice_lines.idInvoice'
             }
         }
     }

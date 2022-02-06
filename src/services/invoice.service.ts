@@ -9,15 +9,19 @@ export default class InvoiceService {
             .withGraphFetched('responsible')
             .withGraphFetched('client')
     }
+
     static async getById(id: number) {
         return await Invoice.query()
             .findById(id)
+            .withGraphFetched('lines')
             .withGraphFetched('responsible.company')
             .withGraphFetched('client.company')
     }
+
     static async delete(id: number) {
         return await Invoice.query().deleteById(id)
     }
+
     static async create(body: any, auth: User) {
         const lastInvoice = await Invoice.query().where('idCompany', auth.idCompany as number).orderBy('id', "desc").first();
 
