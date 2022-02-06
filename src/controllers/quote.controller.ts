@@ -5,7 +5,7 @@ import User from "../models/user.model";
 import QuoteService from "../services/quote.service";
 
 async function findAll(req: IAuthRequest, res: Response) {
-    res.json(await QuoteService.findAll())
+    res.json(await QuoteService.findAll(req.query))
 }
 
 async function getById(req: IAuthRequest, res: Response) {
