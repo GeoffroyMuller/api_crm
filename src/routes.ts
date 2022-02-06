@@ -1,5 +1,6 @@
 import { Application } from "express";
 import AuthController from "./controllers/auth.controller";
+import ClientController from "./controllers/client.controller";
 import CompanyController from "./controllers/company.controller";
 import QuoteController from "./controllers/quote.controller";
 import UserController from "./controllers/user.controller";
@@ -21,6 +22,8 @@ export default function Routes(app: Application) {
     app.delete('/quotes/:id',authMiddleware,  QuoteController.deleteById)
     app.get('/quotes/:id', authMiddleware, QuoteController.getById)
 
+    app.get('/quotes/:id/pdf', QuoteController.getPdf)
+
     app.get('/users', authMiddleware, UserController.findAll)
     /*
     app.post('/users', UserController.create)
@@ -28,5 +31,11 @@ export default function Routes(app: Application) {
     app.delete('/users/:id', UserController.deleteById)
     app.get('/users/:id', UserController.getById)
     */
+
+    app.get('/clients', authMiddleware, ClientController.findAll)
+    app.post('/clients', authMiddleware, ClientController.create)
+    app.put('/clients/:id', authMiddleware, ClientController.update)
+    app.delete('/clients/:id',authMiddleware,  ClientController.deleteById)
+    app.get('/clients/:id', authMiddleware, ClientController.getById)
 
 } 

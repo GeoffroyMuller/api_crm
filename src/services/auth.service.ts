@@ -8,7 +8,7 @@ const JWT_EXPIRY_SECONDS = process.env.JWT_EXPIRY_SECONDS;
 export default class AuthService {
     static async login(email: string, password: string) {
         try {
-            const user = await User.query().where('email', email).first();
+            const user = await User.query().where('email', email).first().withGraphFetched('company.clientCompanies');
             if (user && await bcrypt.compare(password, user.password || '')) {
                 const token = await jwt.sign({ id: user.id }, JWT_KEY || '', {
                     algorithm: "HS256",
@@ -33,7 +33,7 @@ export default class AuthService {
         try {
             payload = jwt.verify(token, JWT_KEY || '') as JwtPayload
             const { id } = payload;
-            const auth = await User.query().where('id', '=', id).first();
+            const auth = await User.query().where('id', '=', id).withGraphFetched('company.clientCompanies').first();
             return auth || undefined;
         } catch (e) {
             return undefined;

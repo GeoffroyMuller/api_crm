@@ -1,26 +1,23 @@
 import { Model, Pojo } from "objection"
-import Company from "./company.model"
+import Company from "./company.model";
 
-export default class User extends Model {
 
+
+
+export default class Client extends Model {
     id?: number
     firstname?: string
     lastname?: string
     address?: string
     phone?: string
     email?: string
-    password?: string
     idCompany?: number;
+    description?: string;
     company?: Company;
 
-    $formatJson(json: Pojo): Pojo {
-        json = super.$formatJson(json)
-        delete json.password
-        return json
-    }
 
     static get tableName() {
-        return 'users'
+        return 'clients'
     }
 
     static relationMappings = {
@@ -28,10 +25,11 @@ export default class User extends Model {
             relation: Model.BelongsToOneRelation,
             modelClass: Company,
             join: {
-                from: 'users.idCompany',
+                from: 'clients.idCompany',
                 to: 'companies.id'
             }
         },
         
     };
 }
+

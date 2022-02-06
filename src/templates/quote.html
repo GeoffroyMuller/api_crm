@@ -1,0 +1,19 @@
+<body style="width:85%; margin: auto; padding-top: 15px; padding-bottom: 15px">
+    <h1 style="text-align: center">
+        <%= name %>
+    </h1>
+    <table style="width:100%">
+        <tr>
+            <td width="50%" align="left">
+                <%= responsible.firstname %>
+                    <%= responsible.lastname %> <br />
+                        <%= responsible?.company?.name %>
+            </td>
+            <td width="50%" align="right">
+                <%= client.firstname %>
+                    <%= client.lastname %> <br />
+                        <%= client.company.name %>
+            </td>
+        </tr>
+    </table>
+</body>
