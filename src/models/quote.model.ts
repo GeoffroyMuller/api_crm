@@ -23,6 +23,8 @@ export default class Quote extends Model {
 
     status?: 'draft' | 'validated' | 'refused';
 
+    archived?: boolean;
+
 
     $formatJson(json: Pojo): Pojo {
         json = super.$formatJson(json)

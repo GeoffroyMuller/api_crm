@@ -1,12 +1,23 @@
+import { query } from "express";
 import Quote from "../models/quote.model"
 import User from "../models/user.model";
 import PdfService from "./pdf.service";
 
 export default class QuoteService {
-    static async findAll() {
-        return await Quote.query()
+    static async findAll(queryStr: any) {
+        let query = Quote.query()
             .withGraphFetched('responsible')
             .withGraphFetched('client')
+
+        if (queryStr.archived) {
+            query.where('archived', true)
+        } else {
+            query.where('archived', false)
+                .orWhereNull('archived')
+        }
+
+
+        return await query;
     }
 
     static async getById(id: number) {
@@ -18,7 +29,9 @@ export default class QuoteService {
     }
 
     static async delete(id: number) {
-        return await Quote.query().deleteById(id)
+
+        return await Quote.query().updateAndFetchById(id, { archived: true });
+        //return await Quote.query().deleteById(id)
     }
 
     static async create(body: any, auth: User) {
@@ -26,7 +39,7 @@ export default class QuoteService {
 
         let identifier: string = +(lastQuote?.identifier || "") + 1 + "";
 
-        console.log({body})
+        console.log({ body })
         return await Quote.query().upsertGraphAndFetch({
             ...body,
             identifier,
