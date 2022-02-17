@@ -4,10 +4,26 @@ import User from "../models/user.model";
 import PdfService from "./pdf.service";
 
 export default class QuoteService {
-    static async findAll(queryStr: any) {
+     static async findAll(queryStr: any, idCompany: number) {
         let query = Quote.query()
             .withGraphFetched('responsible')
             .withGraphFetched('client')
+            .where('idCompany', idCompany);
+
+        if (queryStr.archived) {
+            query.where('archived', true)
+        } else {
+            query.where('archived', false)
+                .orWhereNull('archived')
+        }
+        return await query;
+    } 
+
+    static async paginate(queryStr: any, idCompany: number) {
+        let query = Quote.query()
+            .withGraphFetched('responsible')
+            .withGraphFetched('client')
+            .where('idCompany', idCompany);
 
         if (queryStr.archived) {
             query.where('archived', true)
@@ -16,6 +32,7 @@ export default class QuoteService {
                 .orWhereNull('archived')
         }
 
+        query.page(queryStr.page || 0, queryStr.pageSize || 5);
 
         return await query;
     }
@@ -23,7 +40,7 @@ export default class QuoteService {
     static async getById(id: number) {
         return await Quote.query()
             .findById(id)
-            .withGraphFetched('lines')
+            .withGraphFetched('lines.vat')
             .withGraphFetched('responsible.company')
             .withGraphFetched('client.company')
     }

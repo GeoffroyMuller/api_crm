@@ -1,4 +1,5 @@
 import { Model } from "objection"
+import Vat from "./vat.model";
 
 export default class QuoteLine extends Model {
    id?: number;
@@ -9,11 +10,22 @@ export default class QuoteLine extends Model {
    discount?: number;
    discount_type?: '€' | '%';
    type?: "title" | "product" | "comment" | "discount"
-
+   idVat?: number;
 
 
     static get tableName() {
         return 'quote_lines'
     }
+
+    static relationMappings = {
+        vat: {
+            relation: Model.BelongsToOneRelation,
+            modelClass: Vat,
+            join: {
+                from: 'quote_lines.idVat',
+                to: 'vat.id'
+            }
+        },
+    };
 }
 

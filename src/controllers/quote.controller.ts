@@ -4,8 +4,12 @@ import { IAuthRequest } from "../middlewares/auth.middleware";
 import User from "../models/user.model";
 import QuoteService from "../services/quote.service";
 
-async function findAll(req: IAuthRequest, res: Response) {
-    res.json(await QuoteService.findAll(req.query))
+/* async function findAll(req: IAuthRequest, res: Response) {
+    res.json(await QuoteService.findAll(req.query, req.auth?.idCompany as number))
+} */
+
+async function paginate(req: IAuthRequest, res: Response) {
+    res.json(await QuoteService.paginate(req.query, req.auth?.idCompany as number))
 }
 
 async function getById(req: IAuthRequest, res: Response) {
@@ -41,7 +45,7 @@ async function deleteById(req: IAuthRequest, res: Response) {
 
 
 export default {
-    findAll,
+    paginate,
     deleteById,
     update,
     create,

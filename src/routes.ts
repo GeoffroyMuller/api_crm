@@ -6,6 +6,7 @@ import QuoteController from "./controllers/quote.controller";
 import UserController from "./controllers/user.controller";
 import InvoiceController from "./controllers/invoice.controller";
 import authMiddleware from "./middlewares/auth.middleware";
+import VatController from "./controllers/vat.controller";
 
 export default function Routes(app: Application) {
 
@@ -17,7 +18,7 @@ export default function Routes(app: Application) {
     app.delete('/companies/:id',authMiddleware,  CompanyController.deleteById)
     app.get('/companies/:id', authMiddleware, CompanyController.getById)
     
-    app.get('/quotes', authMiddleware, QuoteController.findAll)
+    app.get('/quotes/paginate', authMiddleware, QuoteController.paginate)
     app.post('/quotes', authMiddleware, QuoteController.create)
     app.put('/quotes/:id', authMiddleware, QuoteController.update)
     app.delete('/quotes/:id',authMiddleware,  QuoteController.deleteById)
@@ -28,14 +29,14 @@ export default function Routes(app: Application) {
     app.post('/invoices', authMiddleware, InvoiceController.create)
     app.delete('/invoices/:id',authMiddleware,  InvoiceController.deleteById)
     app.get('/invoices/:id', authMiddleware, InvoiceController.getById)
-    app.get('/invoices/:id/pdf', InvoiceController.getPdf)
+    app.get('/invoices/:id/pdf', authMiddleware, InvoiceController.getPdf)
 
     app.get('/users', authMiddleware, UserController.findAll)
     app.post('/users', UserController.create)
     /*
     app.post('/users', UserController.create)
     app.put('/users/:id', UserController.update)
-    app.delete('/users/:id', UserController.deleteById)
+    app.delete('/users/:id', UserController.deleteById)s
     app.get('/users/:id', UserController.getById)
     */
 
@@ -44,5 +45,11 @@ export default function Routes(app: Application) {
     app.put('/clients/:id', authMiddleware, ClientController.update)
     app.delete('/clients/:id',authMiddleware,  ClientController.deleteById)
     app.get('/clients/:id', authMiddleware, ClientController.getById)
+
+
+    app.get('/vats', authMiddleware, VatController.findAll)
+    app.post('/vats', authMiddleware, VatController.create)
+    app.put('/vats/:id', authMiddleware, VatController.update)
+    app.delete('/vats/:id',authMiddleware,  VatController.deleteById)
 
 } 

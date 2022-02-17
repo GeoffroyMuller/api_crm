@@ -1,4 +1,5 @@
 import { Model } from "objection"
+import Vat from "./vat.model";
 
 export default class Company extends Model {
 
@@ -12,6 +13,14 @@ export default class Company extends Model {
     }
 
     static relationMappings = {
+        vat: {
+            relation: Model.HasManyRelation,
+            modelClass: Vat,
+            join: {
+                from: 'companies.id',
+                to: 'vat.idCompany'
+            }
+        },
         clientCompanies: {
             relation: Model.HasManyRelation,
             modelClass: Company,
