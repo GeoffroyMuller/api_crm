@@ -8,21 +8,28 @@
     <title>Devis</title>
 </head>
 
-<body style="width:95%; margin: auto; padding-top: 15px; padding-bottom: 15px">
+<body>
 
     <style>
         body {
             font-size: 28px;
+            width: 95%;
+            margin: auto;
+            padding-top: 15px;
+            padding-bottom: 15px
         }
 
         body>* {
             margin-bottom: 32px;
         }
 
+        table {
+            width:100%;
+            max-width: 100%;
+        }
+
         .products-table {
             border-collapse: collapse;
-            width: 100%;
-            max-width: 100%;
         }
 
 
@@ -45,7 +52,7 @@
             border: none;
         }
 
-        
+
         .products-table tfoot td:last-child {
             border: none;
             border: 1px solid black;
@@ -64,7 +71,7 @@
         Devis #<%= identifier %>
     </h1>
 
-    <table style="width:100%">
+    <table>
         <tr>
             <td width="50%" align="left">
                 <%= responsible.firstname %>
@@ -82,14 +89,17 @@
     <table class="products-table">
         <thead>
             <tr>
-                <th align="left">
+                <th align="left" width="50%">
                     DESCRIPTION
                 </th>
                 <th align="left">
                     QUANTITÉ
                 </th>
-                <th "align=" left">
+                <th align="left">
                     PRIX UNITAIRE
+                </th>
+                <th align="left">
+                    TVA
                 </th>
                 <th align="left">
                     TOTAL
@@ -99,14 +109,17 @@
         <tbody>
             <% lines.forEach(function(line){ %>
                 <tr>
-                    <td>
-                        <pre><%= line.description %></pre>
+                    <td width="50%">
+                        <%- line.description %>
                     </td>
                     <td align="center">
                         <%= line.qty %>
                     </td>
                     <td align="center">
                         <%= line.unit_price %>
+                    </td>
+                    <td align="center">
+                        <%= line.vatRate %>
                     </td>
                     <td align="center">
                         <%= line.unit_price * line.qty %>
@@ -116,6 +129,9 @@
         </tbody>
         <tfoot>
             <tr>
+                <td>
+
+                </td>
                 <td>
 
                 </td>
@@ -134,7 +150,7 @@
         </tfoot>
     </table>
 
-   
+
 </body>
 
 </html>

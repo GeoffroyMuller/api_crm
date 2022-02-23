@@ -1,5 +1,6 @@
 import { Model, Pojo } from "objection"
 import Client from "./client.model";
+import Invoice from "./invoice.model";
 import QuoteLine from "./quoteline.model";
 import User from "./user.model";
 
@@ -24,6 +25,9 @@ export default class Quote extends Model {
     status?: 'draft' | 'validated' | 'refused';
 
     archived?: boolean;
+    totalPrice?: number;
+
+    invoices?: Array<Invoice>;
 
 
     $formatJson(json: Pojo): Pojo {
@@ -37,6 +41,14 @@ export default class Quote extends Model {
     }
 
     static relationMappings = {
+        invoices: {
+            relation: Model.HasManyRelation,
+            modelClass: Invoice,
+            join: {
+                from: 'quotes.id',
+                to: 'invoices.idQuote'
+            }
+        },
         responsible: {
             relation: Model.BelongsToOneRelation,
             modelClass: User,

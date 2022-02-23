@@ -16,6 +16,10 @@ async function getById(req: IAuthRequest, res: Response) {
     res.json(await QuoteService.getById(req.params.id as unknown as number))
 }
 
+async function preview(req: IAuthRequest, res: Response) {
+    res.send(await QuoteService.preview(req.params.id as unknown as number));
+}
+
 async function getPdf(req: IAuthRequest, res: Response) {
     const quote = await QuoteService.getById(req.params.id as unknown as number);
 
@@ -50,5 +54,6 @@ export default {
     update,
     create,
     getById,
-    getPdf
+    getPdf,
+    preview
 }

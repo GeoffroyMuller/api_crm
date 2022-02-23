@@ -12,6 +12,8 @@ export default class QuoteLine extends Model {
    type?: "title" | "product" | "comment" | "discount"
    idVat?: number;
 
+   vat?: Vat;
+
 
     static get tableName() {
         return 'quote_lines'

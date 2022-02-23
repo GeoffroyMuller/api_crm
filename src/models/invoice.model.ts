@@ -22,7 +22,9 @@ export default class Invoice extends Model {
     madeAt?: string;
     madeOn?: string;
 
-    status?: 'draft' | 'validated' | 'refused';
+    archived?: boolean;
+
+    idQuote?: number;
 
     $formatJson(json: Pojo): Pojo {
         json = super.$formatJson(json)

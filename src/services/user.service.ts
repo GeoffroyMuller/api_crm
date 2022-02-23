@@ -17,7 +17,6 @@ export default class UserService {
 
     static async create(body: any) {
         let data = { ...body }
-        console.log({ body })
         let hash = await bcrypt.hash(data.password, Number(process.env.BCRYPT_SALT) || 10)
         return await User.query().insertAndFetch({
             ...data,

@@ -23,13 +23,15 @@ export default function Routes(app: Application) {
     app.put('/quotes/:id', authMiddleware, QuoteController.update)
     app.delete('/quotes/:id',authMiddleware,  QuoteController.deleteById)
     app.get('/quotes/:id', authMiddleware, QuoteController.getById)
-    app.get('/quotes/:id/pdf', QuoteController.getPdf)
+    app.get('/quotes/:id/pdf', authMiddleware, QuoteController.getPdf)
+    app.get('/quotes/:id/preview', authMiddleware, QuoteController.preview)
     
-    app.get('/invoices', authMiddleware, InvoiceController.findAll)
+    app.get('/invoices/paginate', authMiddleware, InvoiceController.paginate)
     app.post('/invoices', authMiddleware, InvoiceController.create)
     app.delete('/invoices/:id',authMiddleware,  InvoiceController.deleteById)
     app.get('/invoices/:id', authMiddleware, InvoiceController.getById)
     app.get('/invoices/:id/pdf', authMiddleware, InvoiceController.getPdf)
+    app.get('/invoices/:id/preview', authMiddleware, InvoiceController.preview)
 
     app.get('/users', authMiddleware, UserController.findAll)
     app.post('/users', UserController.create)

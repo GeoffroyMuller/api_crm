@@ -4,10 +4,9 @@ import { IAuthRequest } from "../middlewares/auth.middleware";
 import User from "../models/user.model";
 import InvoiceService from "../services/invoice.service";
 
-async function findAll(req: IAuthRequest, res: Response) {
-    console.log({ req })
 
-    res.json(await InvoiceService.findAll())
+async function paginate(req: IAuthRequest, res: Response) {
+    res.json(await InvoiceService.paginate(req.query, req.auth?.idCompany as number))
 }
 
 async function getById(req: IAuthRequest, res: Response) {
@@ -36,11 +35,17 @@ async function deleteById(req: IAuthRequest, res: Response) {
     res.json(await InvoiceService.delete(req.params.id as unknown as number))
 }
 
+async function preview(req: IAuthRequest, res: Response) {
+    console.log({id: req.params.id})
+    res.send(await InvoiceService.preview(req.params.id as unknown as number));
+}
+
 
 export default {
-    findAll,
+    paginate,
     deleteById,
     create,
     getById,
-    getPdf
+    getPdf,
+    preview
 }
