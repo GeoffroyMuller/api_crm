@@ -11,7 +11,11 @@ export default class InvoiceService {
     static async paginate(queryStr: any, idCompany: number) {
         let query = Invoice.query()
             .withGraphFetched('client')
+            .withGraphFetched('payments')
             .where('idCompany', idCompany);
+
+
+           
 
         if (queryStr.archived) {
             query.where('archived', true)
@@ -36,6 +40,7 @@ export default class InvoiceService {
             .withGraphFetched('lines.vat')
             .withGraphFetched('responsible.company')
             .withGraphFetched('client.company')
+            .withGraphFetched('payments')
     }
 
     static async delete(id: number) {

@@ -1,6 +1,7 @@
 import { Model, Pojo } from "objection";
 import Client from "./client.model";
 import InvoiceLine from "./invoiceline.model";
+import InvoicePayment from "./invoicepayment.model";
 import User from "./user.model";
 
 
@@ -25,6 +26,8 @@ export default class Invoice extends Model {
     archived?: boolean;
 
     idQuote?: number;
+
+    payments?: Array<InvoicePayment>;
 
     $formatJson(json: Pojo): Pojo {
         json = super.$formatJson(json)
@@ -59,6 +62,14 @@ export default class Invoice extends Model {
             join: {
                 from: 'invoices.id',
                 to: 'invoice_lines.idInvoice'
+            }
+        },
+        payments: {
+            relation: Model.HasManyRelation,
+            modelClass: InvoicePayment,
+            join: {
+                from: 'invoices.id',
+                to: 'invoice_payments.idInvoice'
             }
         }
     }
