@@ -18,7 +18,7 @@ export default function Routes(app: Application) {
     app.delete('/companies/:id',authMiddleware,  CompanyController.deleteById)
     app.get('/companies/:id', authMiddleware, CompanyController.getById)
     
-    app.get('/quotes/paginate', authMiddleware, QuoteController.paginate)
+    app.get('/quotes', authMiddleware, QuoteController.paginate)
     app.post('/quotes', authMiddleware, QuoteController.create)
     app.put('/quotes/:id', authMiddleware, QuoteController.update)
     app.delete('/quotes/:id',authMiddleware,  QuoteController.deleteById)
@@ -26,7 +26,7 @@ export default function Routes(app: Application) {
     app.get('/quotes/:id/pdf', authMiddleware, QuoteController.getPdf)
     app.get('/quotes/:id/preview', authMiddleware, QuoteController.preview)
     
-    app.get('/invoices/paginate', authMiddleware, InvoiceController.paginate)
+    app.get('/invoices', authMiddleware, InvoiceController.paginate)
     app.post('/invoices', authMiddleware, InvoiceController.create)
     app.delete('/invoices/:id',authMiddleware,  InvoiceController.deleteById)
     app.get('/invoices/:id', authMiddleware, InvoiceController.getById)

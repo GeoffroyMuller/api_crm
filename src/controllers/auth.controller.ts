@@ -10,7 +10,7 @@ async function login(req: Request, res: Response) {
             res.status(400).json({message: 'email or password not send'})
         }
     } catch(err) {
-        res.status(500)
+        res.status(500).json({ message: err })
     }
 
 }

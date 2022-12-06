@@ -24,7 +24,7 @@ export default class InvoiceService {
                 .orWhereNull('archived')
         }
 
-        query.page(queryStr.page || 0, queryStr.pageSize || 5);
+        query.page(queryStr.page ? queryStr.page - 1 : 0, queryStr.pageSize || 5);
 
         if (queryStr.order && queryStr.orderBy) {
             query.orderBy(queryStr.orderBy, queryStr.order);
