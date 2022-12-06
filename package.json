@@ -27,7 +27,8 @@
     "jsonwebtoken": "^8.5.1",
     "knex": "^1.0.1",
     "mysql2": "^2.3.3",
-    "objection": "^3.0.1"
+    "objection": "^3.0.1",
+    "puppeteer": "^19.3.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",

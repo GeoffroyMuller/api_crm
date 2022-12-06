@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Devis</title>
+</head>
+
+<body>
+
+    <style>
+        body {
+            font-size: 28px;
+            width: 95%;
+            margin: auto;
+            padding-top: 15px;
+            padding-bottom: 15px
+        }
+
+        body>* {
+            margin-bottom: 32px;
+        }
+
+        table {
+            width:100%;
+            max-width: 100%;
+        }
+
+        .products-table {
+            border-collapse: collapse;
+        }
+
+
+        .products-table thead {
+            background-color: #1976d2;
+            color: white;
+        }
+
+        .products-table tr,
+        .products-table th,
+        .products-table td {
+
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        .products-table tfoot tr,
+        .products-table tfoot th,
+        .products-table tfoot td {
+            border: none;
+        }
+
+
+        .products-table tfoot td:last-child {
+            border: none;
+            border: 1px solid black;
+            color: #2e7d32;
+            background-color: rgb(186, 224, 188);
+        }
+
+
+        .products-table td,
+        .products-table th {
+            padding: 8px;
+        }
+    </style>
+
+    <h1 style="text-align: left">
+        Devis #<%= identifier %>
+    </h1>
+
+    <table>
+        <tr>
+            <td width="50%" align="left">
+                <%= responsible.firstname %>
+                    <%= responsible.lastname %> <br />
+                        <%= responsible?.company?.name %>
+            </td>
+            <td width="50%" align="right">
+                <%= client.firstname %>
+                    <%= client.lastname %> <br />
+                        <%= client.company.name %>
+            </td>
+        </tr>
+    </table>
+
+    <table class="products-table">
+        <thead>
+            <tr>
+                <th align="left" width="50%">
+                    DESCRIPTION
+                </th>
+                <th align="left">
+                    QUANTITÉ
+                </th>
+                <th align="left">
+                    PRIX UNITAIRE
+                </th>
+                <th align="left">
+                    TVA
+                </th>
+                <th align="left">
+                    TOTAL
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <% lines.forEach(function(line){ %>
+                <tr>
+                    <td width="50%">
+                        <%- line.description %>
+                    </td>
+                    <td align="center">
+                        <%= line.qty %>
+                    </td>
+                    <td align="center">
+                        <%= line.unit_price %>
+                    </td>
+                    <td align="center">
+                        <%= line.vatRate %>
+                    </td>
+                    <td align="center">
+                        <%= line.unit_price * line.qty %>
+                    </td>
+                </tr>
+                <% }); %>
+        </tbody>
+        <tfoot>
+            <tr>
+                <td>
+
+                </td>
+                <td>
+
+                </td>
+                <td>
+
+                </td>
+                <td align="right">
+                    <strong>
+                        Total :
+                    </strong>
+                </td>
+                <td align="center">
+                    <%= lines.reduce((prev, curr)=> prev + (curr.unit_price * curr.qty), 0) %>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+
+
+</body>
+
+</html>

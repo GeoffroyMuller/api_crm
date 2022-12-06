@@ -1,4 +1,5 @@
 import { query } from "express";
+import { Stream } from "stream";
 import Invoice from "../models/invoice.model";
 import Quote from "../models/quote.model"
 import User from "../models/user.model";
@@ -47,13 +48,13 @@ export default class QuoteService {
         return await query.execute();
     }
 
-    static async getById(id: number) {
+    static async getById(id: number): Promise<Quote> {
         return await Quote.query()
             .findById(id)
             .withGraphFetched('lines.vat')
             .withGraphFetched('responsible.company')
             .withGraphFetched('client.company')
-            .withGraphFetched('invoices');
+            .withGraphFetched('invoices') as Quote;
     }
 
     static async delete(id: number) {
@@ -91,35 +92,28 @@ export default class QuoteService {
     static async preview(id: number) {
         const quote = await QuoteService.getById(id);
         const html = fs.readFileSync(__dirname + '/../templates/quote.html', 'utf8');
-        const htmlReplaced: string = ejs.render(html, {
+        const htmlReplaced: string = ejs.render(html, QuoteService._mapQuoteDataToDisplay(quote));
+        return htmlReplaced;
+    }
+    
+    static async getPdf(id: number, quote?: Quote): Promise<Stream> {
+        let quoteToPrint = quote || await QuoteService.getById(id);
+        const pdf = await PdfService.printPDF({
+            data: QuoteService._mapQuoteDataToDisplay(quoteToPrint),
+            inputPath: __dirname + '/../templates/quote.html',
+            returnType: "stream",
+        });
+        return pdf as Stream;
+
+    }
+
+    static _mapQuoteDataToDisplay(quote: Quote) {
+        return {
             ...quote,
             lines: quote?.lines?.map(line => ({
                 ...line,
                 vatRate: line?.vat?.rate ? `${line?.vat?.rate }%` : '-'
             }))
-        });
-        return htmlReplaced;
+        };
     }
-
-    static async getPdf(id: number, quote?: Quote) {
-
-        let quoteToPrint = quote || await QuoteService.getById(id);
-        
-        const pdf = await PdfService.generatePDF({
-            data: {
-                ...quoteToPrint,
-                lines: quoteToPrint?.lines?.map(line => ({
-                    ...line,
-                    vatRate: line?.vat?.rate ? `${line?.vat?.rate }%` : '-'
-                }))
-                
-            },
-            inputPath: __dirname + '/../templates/quote.html',
-            returnType: "stream",
-        })
-
-        return pdf;
-
-    }
-
 } 

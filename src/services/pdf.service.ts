@@ -1,10 +1,47 @@
+import { Stream } from "stream";
+
 var pdf = require('html-pdf');
 const fs = require('fs');
 let ejs = require('ejs');
+const puppeteer = require('puppeteer');
+const { Readable } = require('stream');
 
 export default class PdfService {
 
+    static async printPDF({
+        returnType,
+        outputPath,
+        inputPath,
+        data
+    }: {
+        returnType: 'buffer' | 'stream',
+        inputPath: string,
+        data: any;
+        outputPath?: string,
 
+    }): Promise<Stream | Buffer>  {
+        const browser = await puppeteer.launch({ headless: true });
+        const page = await browser.newPage();
+        const html = fs.readFileSync(inputPath, 'utf8');
+        const htmlReplaced: string = ejs.render(html, data);
+        await page.setContent(htmlReplaced, { waitUntil: 'domcontentloaded' });
+
+        // To reflect CSS used for screens instead of print
+        await page.emulateMediaType('screen');
+        const pdf = await page.pdf({ format: 'A4' });
+       
+        await browser.close();
+        
+        if (returnType === "buffer") {
+            return pdf;
+        }
+        const stream = Readable.from(pdf);
+        return stream
+    };
+    
+    /**
+     * @deprecated
+     */
     static async generatePDF(
         {
             returnType,
