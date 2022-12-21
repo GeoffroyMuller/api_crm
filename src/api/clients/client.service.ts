@@ -1,4 +1,4 @@
-import Client from "../models/client.model"
+import Client from "./client.model"
 
 export default class ClientService {
     static async findAll() {

@@ -1,4 +1,4 @@
-import Vat from "../models/vat.model"
+import Vat from "./vat.model"
 
 export default class ClientService {
     static async findAll() {

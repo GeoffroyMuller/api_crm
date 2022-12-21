@@ -1,5 +1,5 @@
-import Company from "../models/company.model"
-import User from "../models/user.model"
+import Company from "./company.model"
+import User from "../users/user.model"
 
 export default class CompanyService {
     static async findAll(auth: User) {

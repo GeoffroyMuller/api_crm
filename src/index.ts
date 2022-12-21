@@ -24,7 +24,6 @@ app.use(cors());
 Routes(app)
 
 
-
 app.listen(3002, () => {
   console.log('The application is listening on port 3002!')
 })

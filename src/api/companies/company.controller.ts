@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { IAuthRequest } from "../middlewares/auth.middleware";
-import User from "../models/user.model";
-import CompanyService from "../services/company.service";
+import { IAuthRequest } from "../auth/auth.middleware";
+import User from "../users/user.model";
+import CompanyService from "./company.service";
 
 async function findAll(req: IAuthRequest, res: Response) {
     res.json(await CompanyService.findAll(req.auth as User))

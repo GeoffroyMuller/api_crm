@@ -1,9 +1,9 @@
 import { query } from "express";
 import { Stream } from "stream";
-import Invoice from "../models/invoice.model";
-import Quote from "../models/quote.model"
-import User from "../models/user.model";
-import PdfService from "./pdf.service";
+import Invoice from "../invoices/invoice.model";
+import Quote from "./quote.model"
+import User from "../users/user.model";
+import PdfService from "../../services/pdf.service";
 const fs = require('fs');
 let ejs = require('ejs');
 
@@ -95,7 +95,7 @@ export default class QuoteService {
         const htmlReplaced: string = ejs.render(html, QuoteService._mapQuoteDataToDisplay(quote));
         return htmlReplaced;
     }
-    
+
     static async getPdf(id: number, quote?: Quote): Promise<Stream> {
         let quoteToPrint = quote || await QuoteService.getById(id);
         const pdf = await PdfService.printPDF({
@@ -113,7 +113,7 @@ export default class QuoteService {
             lines: quote?.lines?.map(line => ({
                 ...line,
                 vatRate: line?.vat?.rate ? `${line?.vat?.rate }%` : '-'
-            }))
+            })),
         };
     }
 } 

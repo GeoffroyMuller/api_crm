@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { Stream } from "stream";
-import { IAuthRequest } from "../middlewares/auth.middleware";
-import User from "../models/user.model";
-import QuoteService from "../services/quote.service";
+import { IAuthRequest } from "../auth/auth.middleware";
+import User from "../users/user.model";
+import QuoteService from "./quote.service";
 
 /* async function findAll(req: IAuthRequest, res: Response) {
     res.json(await QuoteService.findAll(req.query, req.auth?.idCompany as number))

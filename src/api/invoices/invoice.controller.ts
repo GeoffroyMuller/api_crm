@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { Stream } from "stream";
-import { IAuthRequest } from "../middlewares/auth.middleware";
-import User from "../models/user.model";
-import InvoiceService from "../services/invoice.service";
+import { IAuthRequest } from "../auth/auth.middleware";
+import User from "../users/user.model";
+import InvoiceService from "./invoice.service";
 
 
 async function paginate(req: IAuthRequest, res: Response) {

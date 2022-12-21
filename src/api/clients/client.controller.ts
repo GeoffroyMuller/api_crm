@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { IAuthRequest } from "../middlewares/auth.middleware";
-import ClientService from "../services/client.service";
+import { IAuthRequest } from "../auth/auth.middleware";
+import ClientService from "./client.service";
 
 async function findAll(req: IAuthRequest, res: Response) {
     res.json(await ClientService.findAll())

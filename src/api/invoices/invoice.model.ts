@@ -1,8 +1,8 @@
 import { Model, Pojo } from "objection";
-import Client from "./client.model";
+import Client from "../clients/client.model";
 import InvoiceLine from "./invoiceline.model";
 import InvoicePayment from "./invoicepayment.model";
-import User from "./user.model";
+import User from "../users/user.model";
 
 
 export default class Invoice extends Model {

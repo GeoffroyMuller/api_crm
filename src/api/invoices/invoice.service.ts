@@ -1,7 +1,7 @@
 import { json } from "express";
-import Invoice from "../models/invoice.model";
-import User from "../models/user.model";
-import PdfService from "./pdf.service";
+import Invoice from "./invoice.model";
+import User from "../users/user.model";
+import PdfService from "../../services/pdf.service";
 const fs = require('fs');
 let ejs = require('ejs');
 

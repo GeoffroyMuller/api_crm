@@ -1,5 +1,5 @@
 import { Model } from "objection"
-import Vat from "./vat.model";
+import Vat from "../vats/vat.model";
 
 export default class Company extends Model {
 

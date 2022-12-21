@@ -1,5 +1,5 @@
 import { Model, Pojo } from "objection"
-import Company from "./company.model";
+import Company from "../companies/company.model";
 
 
 

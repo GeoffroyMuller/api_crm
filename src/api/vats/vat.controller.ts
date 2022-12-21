@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { IAuthRequest } from "../middlewares/auth.middleware";
-import VatService from "../services/vat.service";
+import { IAuthRequest } from "../auth/auth.middleware";
+import VatService from "./vat.service";
 
 async function findAll(req: IAuthRequest, res: Response) {
     res.json(await VatService.findAll())
