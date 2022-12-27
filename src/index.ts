@@ -4,7 +4,6 @@ import express, { Application } from 'express'
 import './config/database'
 const cors = require('cors');
 let cookieParser = require('cookie-parser');
-var pdf = require('html-pdf');
 
 import Routes from './routes';
 
