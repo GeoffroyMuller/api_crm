@@ -23,7 +23,7 @@ app.use(cors());
 Routes(app)
 
 app.get('/test', (req, res) => {
-  res.send('TEST OK !!')
+  res.send('TEST OK 2 !!')
 })
 
 
