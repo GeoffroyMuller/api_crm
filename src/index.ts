@@ -22,11 +22,6 @@ app.use(cors());
 
 Routes(app)
 
-app.get('/test', (req, res) => {
-  res.send('TEST OK 33 !!')
-})
-
-
 app.listen(3002, () => {
   console.log('The application is listening on port 3002!')
 })
