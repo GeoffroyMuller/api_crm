@@ -20,8 +20,15 @@ async function sendMail({
 }) {
 
     if (process.env.NODE_ENV === "dev") {
+        console.log("send_mail", {
+            from,
+            to,
+            html,
+            text,
+            subject
+        })
         return undefined;
-    }
+    } 
     // Uncomment below two lines to configure authorization using: partner-key
     // var partnerKey = defaultClient.authentications['partner-key'];
     // partnerKey.apiKey = 'YOUR API KEY';

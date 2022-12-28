@@ -4,6 +4,7 @@ import Invoice from "../invoices/invoice.model";
 import Quote from "./quote.model"
 import User from "../users/user.model";
 import PdfService from "../../services/pdf.service";
+import mailService from "../../services/mail.service";
 const fs = require('fs');
 let ejs = require('ejs');
 
@@ -68,7 +69,6 @@ export default class QuoteService {
 
         let identifier: string = +(lastQuote?.identifier || "") + 1 + "";
 
-        console.log({ body })
         return await Quote.query().upsertGraphAndFetch({
             ...body,
             identifier,
@@ -100,11 +100,29 @@ export default class QuoteService {
         let quoteToPrint = quote || await QuoteService.getById(id);
         const pdf = await PdfService.printPDF({
             data: QuoteService._mapQuoteDataToDisplay(quoteToPrint),
-            inputPath: __dirname + '/../templates/quote.html',
+            inputPath: __dirname + '/../../templates/quote.html',
             returnType: "stream",
         });
         return pdf as Stream;
 
+    }
+
+
+    static async sendByMail(id: number) {
+        
+        try {
+            const quote = await QuoteService.getById(id);
+            const res = mailService.sendMail({
+                html: ejs.render(fs.readFileSync(__dirname + '/../../templates/quote.html', 'utf8'), QuoteService._mapQuoteDataToDisplay(quote)),
+                text: "",
+                subject: "Devis",
+                to: quote?.client?.email as string
+            });
+            return res;
+        } catch(err) {
+            console.error(err);
+            return err;
+        }
     }
 
     static _mapQuoteDataToDisplay(quote: Quote) {

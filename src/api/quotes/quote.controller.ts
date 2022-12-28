@@ -20,6 +20,10 @@ async function preview(req: IAuthRequest, res: Response) {
     res.send(await QuoteService.preview(req.params.id as unknown as number));
 }
 
+async function sendByMail(req: IAuthRequest, res: Response) {
+    res.json(await QuoteService.sendByMail(req.params.id as unknown as number))
+}
+
 async function getPdf(req: IAuthRequest, res: Response) {
     const quote = await QuoteService.getById(req.params.id as unknown as number);
 
@@ -55,5 +59,6 @@ export default {
     create,
     getById,
     getPdf,
-    preview
+    preview,
+    sendByMail
 }

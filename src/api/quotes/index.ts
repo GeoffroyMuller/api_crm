@@ -11,5 +11,6 @@ router.delete('/:id',authMiddleware,  QuoteController.deleteById)
 router.get('/:id', authMiddleware, QuoteController.getById)
 router.get('/:id/pdf', authMiddleware, QuoteController.getPdf)
 router.get('/:id/preview', authMiddleware, QuoteController.preview)
+router.post('/:id/send_mail', authMiddleware, QuoteController.sendByMail)
 
 export default router;
