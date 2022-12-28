@@ -6,7 +6,7 @@ const cors = require('cors');
 let cookieParser = require('cookie-parser');
 
 import Routes from './routes';
-import mailService from './services/mail.service';
+
 
 const app: Application = express()
 
@@ -21,6 +21,10 @@ app.use(cookieParser({
 app.use(cors());
 
 Routes(app)
+
+app.get('/test', (req, res) => {
+  res.send('TEST OK !!')
+})
 
 
 app.listen(3002, () => {
