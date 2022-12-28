@@ -7,7 +7,7 @@
     "build": "npx tsc --project ./",
     "start": "node ./build/index.js",
     "dev": "nodemon ./src/index.ts",
-    "knex": "./node_modules/.bin/knex --knexfile src/config/database.ts",
+    "knex": "cd ./node_modules/.bin/ | knex --knexfile src/config/database.ts",
     "migrate:make": "npm run knex migrate:make -- ",
     "migrate": "npm run knex migrate:latest",
     "migrate:rollback": "npm run knex migrate:rollback"
@@ -28,7 +28,8 @@
     "knex": "^1.0.1",
     "mysql2": "^2.3.3",
     "objection": "^3.0.1",
-    "puppeteer": "^19.3.0"
+    "puppeteer": "^19.3.0",
+    "sib-api-v3-sdk": "^8.5.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",

@@ -6,6 +6,7 @@ const cors = require('cors');
 let cookieParser = require('cookie-parser');
 
 import Routes from './routes';
+import mailService from './services/mail.service';
 
 const app: Application = express()
 
@@ -16,7 +17,6 @@ app.use(bodyParser.json())
 app.use(cookieParser({
   maxAge: 60 * 60 * 24 * 7 // 1 week
 }));
-
 
 app.use(cors());
 

@@ -1,6 +1,6 @@
-require('dotenv').config();
 const Knex = require('knex');
 import { Model } from "objection";
+require('dotenv').config({path: __dirname + "/../../.env"});
 
 const config = {
     client: 'mysql2',
