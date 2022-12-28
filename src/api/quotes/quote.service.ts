@@ -91,7 +91,7 @@ export default class QuoteService {
 
     static async preview(id: number) {
         const quote = await QuoteService.getById(id);
-        const html = fs.readFileSync(__dirname + '/../templates/quote.html', 'utf8');
+        const html = fs.readFileSync(__dirname + '/../../templates/quote.html', 'utf8');
         const htmlReplaced: string = ejs.render(html, QuoteService._mapQuoteDataToDisplay(quote));
         return htmlReplaced;
     }
