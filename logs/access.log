@@ -1,0 +1,2 @@
+::1 - - [31/Dec/2022:13:11:45 +0000] "GET /quotes?page=1&pageSize=5 HTTP/1.1" 304 - "http://127.0.0.1:5173/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
+::1 - - [31/Dec/2022:13:11:45 +0000] "GET /quotes?page=1&pageSize=5 HTTP/1.1" 304 - "http://127.0.0.1:5173/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"

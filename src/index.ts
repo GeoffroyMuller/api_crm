@@ -4,7 +4,9 @@ import express, { Application } from 'express'
 import './config/database'
 const cors = require('cors');
 let cookieParser = require('cookie-parser');
-
+let morgan = require('morgan');
+import * as fs from "fs";
+import * as path from "path"; 
 import Routes from './routes';
 
 
@@ -19,6 +21,11 @@ app.use(cookieParser({
 }));
 
 app.use(cors());
+
+
+app.use(morgan('combined', {
+  stream: fs.createWriteStream(path.join(__dirname, '../logs/access.log'), { flags: 'a' }) 
+}))
 
 Routes(app)
 
