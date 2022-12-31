@@ -71,7 +71,7 @@ export default class InvoiceService {
 
     static async preview(id: number) {
         const invoice = await InvoiceService.getById(id);
-        const html = fs.readFileSync(__dirname + '/../templates/invoice.html', 'utf8');
+        const html = fs.readFileSync(__dirname + '/../templates/invoice.ejs', 'utf8');
         console.log({invoice})
         const htmlReplaced: string = ejs.render(html, JSON.parse(invoice?.jsonCopy || ''));
         return htmlReplaced;
@@ -83,7 +83,7 @@ export default class InvoiceService {
 
         const pdf = await PdfService.generatePDF({
             data: JSON.parse(invoiceToPrint?.jsonCopy || ''),
-            inputPath: __dirname + '/../templates/invoice.html',
+            inputPath: __dirname + '/../templates/invoice.ejs',
             returnType: "stream",
         })
 

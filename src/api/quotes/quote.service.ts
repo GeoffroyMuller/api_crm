@@ -91,7 +91,7 @@ export default class QuoteService {
 
     static async preview(id: number) {
         const quote = await QuoteService.getById(id);
-        const html = fs.readFileSync(__dirname + '/../../templates/quote.html', 'utf8');
+        const html = fs.readFileSync(__dirname + '/../../templates/quote.ejs', 'utf8');
         const htmlReplaced: string = ejs.render(html, QuoteService._mapQuoteDataToDisplay(quote));
         return htmlReplaced;
     }
@@ -100,7 +100,7 @@ export default class QuoteService {
         let quoteToPrint = quote || await QuoteService.getById(id);
         const pdf = await PdfService.printPDF({
             data: QuoteService._mapQuoteDataToDisplay(quoteToPrint),
-            inputPath: __dirname + '/../../templates/quote.html',
+            inputPath: __dirname + '/../../templates/quote.ejs',
             returnType: "stream",
         });
         return pdf as Stream;
@@ -113,7 +113,7 @@ export default class QuoteService {
         try {
             const quote = await QuoteService.getById(id);
             const res = mailService.sendMail({
-                html: ejs.render(fs.readFileSync(__dirname + '/../../templates/quote.html', 'utf8'), QuoteService._mapQuoteDataToDisplay(quote)),
+                html: ejs.render(fs.readFileSync(__dirname + '/../../templates/quote.ejs', 'utf8'), QuoteService._mapQuoteDataToDisplay(quote)),
                 text: "",
                 subject: "Devis",
                 to: quote?.client?.email as string
