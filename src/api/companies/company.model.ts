@@ -29,7 +29,6 @@ export default class Company extends Model {
                 to: 'companies.idCompany'
             }
         },
-        
     };
 }
 
