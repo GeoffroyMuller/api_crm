@@ -5,9 +5,13 @@ import { Response } from "express";
 import Client from "./client.model";
 
 const clientController = controllerFactory(ClientService, {
-    isModelBlocked: (req: IAuthRequest, res: Response, model: Client) => {
-        return model.idCompany != req.auth?.idCompany;
-    }
+    isModelBlocked: async (req: IAuthRequest, res: Response, model: Client) => {
+        if (model?.company?.idCompany) {
+            return model.company?.idCompany != req.auth?.idCompany;
+        }
+        const company = await model.$relatedQuery('company').execute();
+        return company == null ?  true : company.idCompany != req.auth?.idCompany;
+    },
 });
 
 export default clientController;
