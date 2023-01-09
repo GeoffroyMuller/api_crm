@@ -1,6 +1,7 @@
 import { query } from "express";
 import Product from "./product.model";
 import User from "../users/user.model";
+import ProductField from "./product_field.model";
 
 async function findAll(idCompany: number) {
   let query = Product.query().where("idCompany", idCompany);
@@ -22,7 +23,8 @@ async function paginate(queryStr: any, idCompany: number) {
 async function getById(id: number): Promise<Product> {
   return (await Product.query()
     .findById(id)
-    .withGraphFetched("products_real")) as Product;
+    .withGraphFetched("products_real")
+    .withGraphFetched("product_fields")) as ProductField as Product;
 }
 
 async function deleteById(id: number, auth: User) {
@@ -35,14 +37,20 @@ async function deleteById(id: number, auth: User) {
 }
 
 async function create(body: any, auth: User) {
-  return await Product.query().insertAndFetch({
+  return await Product.query().insertGraphAndFetch({
     ...body,
     idCompany: auth.idCompany,
   });
 }
 
-async function update(id: number, body: any) {
-  return await Product.query().updateAndFetchById(id, body);
+async function update(id: number, body: any, auth: User) {
+  return await Product.query().upsertGraphAndFetch(
+    {
+      ...body,
+      id,
+      idCompany: auth.idCompany,
+    }
+  );
 }
 
 export default {

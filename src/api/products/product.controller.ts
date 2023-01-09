@@ -24,7 +24,11 @@ async function create(req: IAuthRequest, res: Response) {
 
 async function update(req: IAuthRequest, res: Response) {
   res.json(
-    await ProductService.update(req.params.id as unknown as number, req.body)
+    await ProductService.update(
+      req.params.id as unknown as number,
+      req.body,
+      req.auth as User
+    )
   );
 }
 
