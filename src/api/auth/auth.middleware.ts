@@ -15,6 +15,6 @@ export default async function authMiddleware(req: IAuthRequest, res: Response, n
         next();
     } else {
         res.cookie('token', '');
-        res.status(403).end();
+        res.status(401).end();
     }
 }

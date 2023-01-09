@@ -37,10 +37,7 @@ const controllerFactory: ControllerFactory = (service, opts = undefined) => {
         return res.status(200).json(items);
       } catch (err) {
         console.log(err);
-        return res.status(500).json({
-          success: 0,
-          message: "",
-        });
+        return res.status(500).end();
       }
     },
     getById: async (req: Request, res: Response) => {
@@ -55,19 +52,13 @@ const controllerFactory: ControllerFactory = (service, opts = undefined) => {
         }
         if (opts?.isModelBlocked != null) {
           if (await opts.isModelBlocked(req, res, item)) {
-            return res.status(401).json({
-              success: 0,
-              message: "",
-            });
+            return res.status(401).end();
           }
         }
         return res.status(200).json(item);
       } catch (err) {
         console.log(err);
-        return res.status(500).json({
-          success: 0,
-          message: "",
-        });
+        return res.status(500).end();
       }
     },
     create: async (req: Request, res: Response) => {
@@ -77,15 +68,18 @@ const controllerFactory: ControllerFactory = (service, opts = undefined) => {
         return res.status(200).json(createdItem);
       } catch (err) {
         console.log(err);
-        return res.status(500).json({
-          success: 0,
-          message: "",
-        });
+        return res.status(500).end();
       }
     },
     update: async (req: Request, res: Response) => {
       try {
-        const item = req.body;
+        let item = await service.getById(req.params.id);
+        if (opts?.isModelBlocked != null) {
+          if (await opts.isModelBlocked(req, res, item)) {
+            return res.status(401).end();
+          }
+        }
+        item = {id: req.params.id, ...req.body};
         const updatedItem = await service.update(item);
         if (!updatedItem) {
           return res.status(404).json({
@@ -96,29 +90,29 @@ const controllerFactory: ControllerFactory = (service, opts = undefined) => {
         return res.status(200).json(updatedItem);
       } catch (err) {
         console.log(err);
-        return res.status(500).json({
-          success: 0,
-          message: "",
-        });
+        return res.status(500).end();
       }
     },
     delete: async (req: Request, res: Response) => {
       try {
         const id = req.params.id;
+        const item = await service.getById(id);
+        if (!item) {
+          return res.status(404).json({
+            success: 0,
+            message: "Item not found",
+          });
+        }
+        if (opts?.isModelBlocked != null) {
+          if (await opts.isModelBlocked(req, res, item)) {
+            return res.status(401).end();
+          }
+        }
         const deletedItem = await service.remove(id);
-
-        return res.status(404).json({
-          success: 0,
-          message: "Item not found",
-        });
-
         return res.status(200).json(deletedItem);
       } catch (err) {
         console.log(err);
-        return res.status(500).json({
-          success: 0,
-          message: "",
-        });
+        return res.status(500).end();
       }
     },
   };
