@@ -20,7 +20,9 @@ async function paginate(queryStr: any, idCompany: number) {
 }
 
 async function getById(id: number): Promise<Product> {
-  return (await Product.query().findById(id)) as Product;
+  return (await Product.query()
+    .findById(id)
+    .withGraphFetched("products_real")) as Product;
 }
 
 async function deleteById(id: number, auth: User) {
