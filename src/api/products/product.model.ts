@@ -1,4 +1,5 @@
-import { Model, Pojo } from "objection";
+import { Model } from "objection";
+import ProductField from "./product_field.model";
 import ProductReal from "./product_real.model";
 
 export default class Product extends Model {
@@ -11,6 +12,7 @@ export default class Product extends Model {
   stock?: number;
 
   products_real?: Array<ProductReal>;
+  product_fields?: Array<ProductField>;
 
   static get tableName() {
     return "products";
@@ -25,5 +27,13 @@ export default class Product extends Model {
         to: "products_real.idProduct",
       },
     },
+    product_fields: {
+      relation: Model.HasManyRelation,
+      modelClass: ProductField,
+      join: {
+        from: "products.id",
+        to: "product_fields.idProduct",
+      },
+    }
   };
 }
