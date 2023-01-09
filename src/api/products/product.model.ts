@@ -6,7 +6,8 @@ export default class Product extends Model {
   name?: string;
   description?: string;
   price?: number;
-  reference?: string;
+  isNumeraryStock?: boolean;
+  stock?: number;
 
   static get tableName() {
     return "products";
