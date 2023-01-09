@@ -66,7 +66,6 @@ export default class InvoiceService {
         data.jsonCopy = jsonCopy;
 
         return await Invoice.query().upsertGraphAndFetch(data, { relate: true, unrelate: true });
-
     }
 
     static async preview(id: number) {

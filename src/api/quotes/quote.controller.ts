@@ -4,10 +4,6 @@ import { IAuthRequest } from "../auth/auth.middleware";
 import User from "../users/user.model";
 import QuoteService from "./quote.service";
 
-/* async function findAll(req: IAuthRequest, res: Response) {
-    res.json(await QuoteService.findAll(req.query, req.auth?.idCompany as number))
-} */
-
 async function paginate(req: IAuthRequest, res: Response) {
     res.json(await QuoteService.paginate(req.query, req.auth?.idCompany as number))
 }
