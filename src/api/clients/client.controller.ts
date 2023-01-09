@@ -1,33 +1,13 @@
-import { Request, Response } from "express";
 import { IAuthRequest } from "../auth/auth.middleware";
 import ClientService from "./client.service";
+import controllerFactory from "../../core/controller";
+import { Response } from "express";
+import Client from "./client.model";
 
-async function findAll(req: IAuthRequest, res: Response) {
-    res.json(await ClientService.findAll())
-}
+const clientController = controllerFactory(ClientService, {
+    isModelBlocked: (req: IAuthRequest, res: Response, model: Client) => {
+        return model.idCompany != req.auth?.idCompany;
+    }
+});
 
-async function getById(req: IAuthRequest, res: Response) {
-    res.json(await ClientService.getById(req.params.id as unknown as number))
-}
-
-async function create(req: IAuthRequest, res: Response) {
-    res.json(await ClientService.create(req.body))
-}
-
-async function update(req: IAuthRequest, res: Response) {
-    res.json(await ClientService.update(req.params.id as unknown as number, req.body))
-}
-
-
-async function deleteById(req: IAuthRequest, res: Response) {
-    res.json(await ClientService.delete(req.params.id as unknown as number))
-}
-
-
-export default {
-    findAll,
-    deleteById,
-    update,
-    create,
-    getById
-}
+export default clientController;

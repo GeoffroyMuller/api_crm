@@ -4,10 +4,10 @@ import ClientController from "./client.controller";
 
 const router = express.Router()
 
-router.get('/', authMiddleware, ClientController.findAll)
+router.get('/', authMiddleware, ClientController.getAll)
 router.post('/', authMiddleware, ClientController.create)
 router.put('/:id', authMiddleware, ClientController.update)
-router.delete('/:id',authMiddleware,  ClientController.deleteById)
+router.delete('/:id',authMiddleware,  ClientController.delete)
 router.get('/:id', authMiddleware, ClientController.getById)
 
 export default router;

@@ -1,9 +1,6 @@
 import { Model, Pojo } from "objection"
 import Company from "../companies/company.model";
 
-
-
-
 export default class Client extends Model {
     id?: number
     firstname?: string
