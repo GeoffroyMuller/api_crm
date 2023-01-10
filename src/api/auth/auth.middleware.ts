@@ -4,7 +4,7 @@ import AuthService from './auth.service';
 
 
 export interface IAuthRequest extends Request {
-    auth?: User;
+    auth: User;
 }
 
 export default async function authMiddleware(req: IAuthRequest, res: Response, next: NextFunction) {

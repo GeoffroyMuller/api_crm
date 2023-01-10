@@ -10,19 +10,19 @@ type ControllerFactory = <T extends Model>(
   service: Service<T>,
   opts?: ControllerFactoryOptions<T>
 ) => {
-  [key: string]: (req: Request, res: Response) => Promise<Response>;
+  [key: string]: (req: IAuthRequest, res: Response) => Promise<Response>;
 };
 
 const controllerFactory: ControllerFactory = (service, opts = undefined) => {
 
-  function _getRelationArray(req: Request): string[] | undefined {
+  function _getRelationArray(req: Request): string[] {
     if (Array.isArray(req.query.populate)) {
       return req.query.populate as string[];
     }
     if (typeof req.query.populate === "string") {
       return [req.query.populate];
     }
-    return undefined;
+    return [];
   }
 
 
@@ -34,9 +34,8 @@ const controllerFactory: ControllerFactory = (service, opts = undefined) => {
             ? req.params.filters 
             : {}
           )
-         
         };
-        const items = await service.getAll(_getRelationArray(req), filters);
+        const items = await service.getAll(_getRelationArray(req), filters, req.auth);
         return res.status(200).json(items);
       } catch (err) {
         console.log(err);

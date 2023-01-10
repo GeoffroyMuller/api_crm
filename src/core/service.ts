@@ -5,7 +5,7 @@ import User from "../api/users/user.model";
 type ID = string | number;
 
 export interface Service<T extends Model> {
-    getAll: (relations?: RelationExpression<T>[], filters?: any) => Promise<T[]>;
+    getAll: (relations: RelationExpression<T>[], filters: any, auth: User) => Promise<T[]>;
     getById:  (id: ID, relations?: RelationExpression<T>[], filters?: any) => Promise<T>;
     create: (item: any) => Promise<T>;
     update: (item: any) => Promise<T>;
@@ -15,16 +15,18 @@ export interface Service<T extends Model> {
     [key: string]: (...args: any) => any;
 } 
 type ServiceFactoryOptions<T extends Model> = {
-  handleFilters?: (query: QueryBuilderType<T>, user: User) => QueryBuilderType<T>;
+  handleFilters?: (query: QueryBuilderType<T>, filters: any) => QueryBuilderType<T>;
   isAuthorized?: (model: T, user: User) => boolean | Promise<boolean>;
+  listAuthDefaultFilters?: (query: QueryBuilderType<T>, user: User) => QueryBuilderType<T>;
 };
 
 const serviceFactory = <T extends Model>(model: ModelClass<T>, opts?: ServiceFactoryOptions<T>): Service<T> => {
   const _handleFilters = opts?.handleFilters || ((query) => query);
+  const _listAuthDefaultFilters = opts?.listAuthDefaultFilters || ((query) => query);
   const _isAuthorized = opts?.isAuthorized || (() => true);
   
   return {
-    getAll: async (relations?: RelationExpression<T>[], filters?: any) => {
+    getAll: async (relations: RelationExpression<T>[], filters: any, auth: User) => {
       const query = model.query();
       if (Array.isArray(relations)) {
         for (const relation of relations) {
@@ -32,6 +34,7 @@ const serviceFactory = <T extends Model>(model: ModelClass<T>, opts?: ServiceFac
         }
       }
       _handleFilters(query, filters);
+      _listAuthDefaultFilters(query, auth);
       return query.execute() as Promise<T[]>;
     },
 
