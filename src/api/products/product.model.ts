@@ -1,6 +1,6 @@
 import { Model } from "objection";
 import ProductField from "./product_field.model";
-import ProductReal from "./product_real.model";
+import ProductReal from "../products_real/product_real.model";
 
 export default class Product extends Model {
   id?: number;

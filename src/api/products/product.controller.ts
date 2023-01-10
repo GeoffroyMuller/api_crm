@@ -1,7 +1,6 @@
 import User from "../users/user.model";
 import { Request, Response } from "express";
 import { IAuthRequest } from "../auth/auth.middleware";
-import Product from "../products/product.model";
 import ProductService from "./product.service";
 
 async function findAll(req: IAuthRequest, res: Response) {

@@ -1,5 +1,6 @@
 import { Model } from "objection";
-import Product from "./product.model";
+import Product from "../products/product.model";
+import ProductRealField from "./product_real_field.model";
 
 export default class ProductReal extends Model {
   id?: number;
@@ -7,6 +8,8 @@ export default class ProductReal extends Model {
   product?: Product;
 
   reference?: string;
+
+  product_real_fields?: Array<ProductRealField>;
 
   static get tableName() {
     return "products_real";
@@ -21,5 +24,13 @@ export default class ProductReal extends Model {
         to: "products.id",
       },
     },
+    product_real_fields: {
+      relation: Model.HasManyRelation,
+      modelClass: Product,
+      join: {
+        from: "products_real.id",
+        to: "product_real_fields.idProductReal",
+      },
+    }
   };
 }
