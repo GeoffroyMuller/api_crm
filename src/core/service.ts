@@ -1,34 +1,49 @@
-import { Model, ModelClass, RelationExpression } from "objection";
+import { query } from "express";
+import { Model, ModelClass, QueryBuilderType, RelationExpression } from "objection";
+import User from "../api/users/user.model";
 
 type ID = string | number;
 
 export interface Service<T extends Model> {
-    getAll: (relations?: RelationExpression<T>[]) => Promise<T[]>;
-    getById:  (id: ID, relations?: RelationExpression<T>[]) => Promise<T>;
+    getAll: (relations?: RelationExpression<T>[], filters?: any) => Promise<T[]>;
+    getById:  (id: ID, relations?: RelationExpression<T>[], filters?: any) => Promise<T>;
     create: (item: any) => Promise<T>;
     update: (item: any) => Promise<T>;
     remove:  (id: ID) => Promise<void>;
+    
+    isAuthorized: (model: T, filters: any) => boolean | Promise<boolean>;
     [key: string]: (...args: any) => any;
 } 
+type ServiceFactoryOptions<T extends Model> = {
+  handleFilters?: (query: QueryBuilderType<T>, user: User) => QueryBuilderType<T>;
+  isAuthorized?: (model: T, user: User) => boolean | Promise<boolean>;
+};
 
-const serviceFactory = <T extends Model>(model: ModelClass<T>): Service<T> => {
+const serviceFactory = <T extends Model>(model: ModelClass<T>, opts?: ServiceFactoryOptions<T>): Service<T> => {
+  const _handleFilters = opts?.handleFilters || ((query) => query);
+  const _isAuthorized = opts?.isAuthorized || (() => true);
+  
   return {
-    getAll: async (relations?: RelationExpression<T>[]) => {
+    getAll: async (relations?: RelationExpression<T>[], filters?: any) => {
       const query = model.query();
       if (Array.isArray(relations)) {
         for (const relation of relations) {
           query.withGraphFetched(relation);
         }
       }
+      _handleFilters(query, filters);
       return query.execute() as Promise<T[]>;
     },
-    getById: async (id: ID, relations?: RelationExpression<T>[]) => {
+
+    
+    getById: async (id: ID, relations?: RelationExpression<T>[], filters?: any) => {
       const query = model.query();
       if (Array.isArray(relations)) {
         for (const relation of relations) {
           query.withGraphFetched(relation);
         }
       }
+      _handleFilters(query, filters);
       return query.findById(id).execute() as Promise<T>;
     },
     create: async (item: any) => {
@@ -40,7 +55,8 @@ const serviceFactory = <T extends Model>(model: ModelClass<T>): Service<T> => {
     remove: async (id: ID) => {
       await model.query().findById(id).delete().execute();
       return;
-    }
+    },
+    isAuthorized: _isAuthorized
   };
 };
 
