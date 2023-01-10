@@ -1,6 +1,4 @@
-import { query } from "express";
 import { Stream } from "stream";
-import Invoice from "../invoices/invoice.model";
 import Quote from "./quote.model"
 import User from "../users/user.model";
 import PdfService from "../../services/pdf.service";

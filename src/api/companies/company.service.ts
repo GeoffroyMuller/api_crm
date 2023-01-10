@@ -1,5 +1,6 @@
 import Company from "./company.model"
 import User from "../users/user.model"
+import { query } from "express"
 
 export default class CompanyService {
     static async findAll(auth: User) {
@@ -7,11 +8,16 @@ export default class CompanyService {
             .where('idCompany', auth?.company?.id || '')
     }
 
-    static async getById(id: number, auth: User) {
-        return await Company.query()
-            .where('idCompany', auth?.company?.id || '')
-            .andWhere('id', id)
-            .first()
+    static async getById(id: number |string, auth?: User) {
+        const query = Company.query();
+        if (auth) {
+            query
+                .where('idCompany', auth?.company?.id || '')
+                .andWhere('id', id);
+        } else {
+            query.where('id', id);
+        }
+        return await query.first()
     }
 
     static async delete(id: number, auth: User) {
