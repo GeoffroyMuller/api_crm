@@ -1,21 +1,8 @@
+import serviceFactory from "../../core/service"
 import Vat from "./vat.model"
 
-export default class ClientService {
-    static async findAll() {
-        return await Vat.query()
-    }
+const vatService = serviceFactory(Vat, {
 
-    static async delete(id: number) {
-        return await Vat.query().deleteById(id)
-    }
+});
 
-    static async create(body: any) {
-        return await Vat.query().insertAndFetch(body)
-    }
-
-    static async update(id: number, body: any) {
-        return await Vat.query().updateAndFetchById(id, body)
-    }
-
-
-} 
+export default vatService;
