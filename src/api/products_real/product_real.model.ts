@@ -26,7 +26,7 @@ export default class ProductReal extends Model {
     },
     product_real_fields: {
       relation: Model.HasManyRelation,
-      modelClass: Product,
+      modelClass: ProductRealField,
       join: {
         from: "products_real.id",
         to: "product_real_fields.idProductReal",
