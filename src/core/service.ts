@@ -14,7 +14,6 @@ export interface Service<T extends Model> {
     
     isAuthorized: (model: T, filters: any) => boolean | Promise<boolean>;
     forceAuthCreateParams: (item: {[key: string]: any}, user: User) => any;
-    [key: string]: (...args: any) => any;
 } 
 export type ServiceFactoryOptions<T extends Model> = {
   handleFilters?: (query: QueryBuilderType<T>, filters: any) => QueryBuilderType<T>;

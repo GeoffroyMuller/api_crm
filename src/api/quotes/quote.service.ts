@@ -12,7 +12,6 @@ export interface IQuoteService extends Service<Quote> {
     preview: (q: Quote) => Promise<string>;
     sendByMail: (q: Quote) => Promise<any>;
     getPdf: (q: Quote) => Promise<Stream>;
-
 }
 
 const quoteService = serviceFactory<Quote>(Quote, {
@@ -33,7 +32,7 @@ const quoteService = serviceFactory<Quote>(Quote, {
             idCompany: user?.idCompany
         };
     }
-});
+}) as IQuoteService;
 
 function _mapQuoteDataToDisplay(quote: Quote) {
     return {
@@ -76,4 +75,4 @@ quoteService.sendByMail = async (quote: Quote) => {
     }
 }
 
-export default quoteService as IQuoteService;
+export default quoteService;
