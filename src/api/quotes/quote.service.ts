@@ -26,10 +26,17 @@ const quoteService = serviceFactory<Quote>(Quote, {
         }
         return query;
     },
-    forceAuthCreateParams: (item, user) => {
+    forceAuthCreateParams: async (item, user) => {
+        const lastQuote = await Quote.query()
+            .where('idCompany', user.idCompany as number)
+            .orderBy('id', "DESC")
+            .first();
+        const lastIdentifier: number = lastQuote?.identifier ? +lastQuote?.identifier : 0;
         return {
             ...item,
-            idCompany: user?.idCompany
+            idCompany: user.idCompany,
+            idResponsible: user.id,
+            identifier: lastIdentifier + 1
         };
     }
 }) as IQuoteService;
