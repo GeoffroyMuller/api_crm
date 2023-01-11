@@ -3,9 +3,17 @@ import Quote from "./quote.model"
 import User from "../users/user.model";
 import PdfService from "../../services/pdf.service";
 import mailService from "../../services/mail.service";
-import serviceFactory from "../../core/service";
+import serviceFactory, { Service } from "../../core/service";
 const fs = require('fs');
 let ejs = require('ejs');
+
+
+export interface IQuoteService extends Service<Quote> {
+    preview: (q: Quote) => Promise<string>;
+    sendByMail: (q: Quote) => Promise<any>;
+    getPdf: (q: Quote) => Promise<Stream>;
+
+}
 
 const quoteService = serviceFactory<Quote>(Quote, {
     isAuthorized: async (model: Quote | Object, user: User) => {
@@ -55,7 +63,7 @@ quoteService.getPdf = async (quote: Quote) => {
 
 quoteService.sendByMail = async (quote: Quote) => {
     try {
-        const res = mailService.sendMail({
+        const res = await mailService.sendMail({
             html: ejs.render(fs.readFileSync(__dirname + '/../../templates/quote.ejs', 'utf8'), _mapQuoteDataToDisplay(quote)),
             text: "",
             subject: "Devis",
@@ -68,4 +76,4 @@ quoteService.sendByMail = async (quote: Quote) => {
     }
 }
 
-export default quoteService;
+export default quoteService as IQuoteService;
