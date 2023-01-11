@@ -1,28 +1,6 @@
-import { Request, Response } from "express";
-import { IAuthRequest } from "../auth/auth.middleware";
+import controllerFactory from "../../core/controller";
 import VatService from "./vat.service";
 
-async function findAll(req: IAuthRequest, res: Response) {
-    res.json(await VatService.findAll())
-}
+const vatController = controllerFactory(VatService);
 
-async function create(req: IAuthRequest, res: Response) {
-    res.json(await VatService.create(req.body))
-}
-
-async function update(req: IAuthRequest, res: Response) {
-    res.json(await VatService.update(req.params.id as unknown as number, req.body))
-}
-
-
-async function deleteById(req: IAuthRequest, res: Response) {
-    res.json(await VatService.delete(req.params.id as unknown as number))
-}
-
-
-export default {
-    findAll,
-    deleteById,
-    update,
-    create,
-}
+export default vatController;

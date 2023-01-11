@@ -1,135 +1,85 @@
 import { Stream } from "stream";
 import Quote from "./quote.model"
 import User from "../users/user.model";
-import PdfService from "../../services/pdf.service";
-import mailService from "../../services/mail.service";
+import PdfService from "../../core/services/pdf.service";
+import mailService from "../../core/services/mail.service";
+import serviceFactory, { Service } from "../../core/service";
 const fs = require('fs');
 let ejs = require('ejs');
 
-export default class QuoteService {
-     static async findAll(queryStr: any, idCompany: number) {
-        let query = Quote.query()
-            .withGraphFetched('responsible')
-            .withGraphFetched('invoices')
-            .withGraphFetched('client')
-            .where('idCompany', idCompany);
-            
 
-        if (queryStr.archived) {
-            query.where('archived', true)
-        } else {
-            query.where('archived', false)
-                .orWhereNull('archived')
+export interface IQuoteService extends Service<Quote> {
+    preview: (q: Quote) => Promise<string>;
+    sendByMail: (q: Quote) => Promise<any>;
+    getPdf: (q: Quote) => Promise<Stream>;
+}
+
+const quoteService = serviceFactory<Quote>(Quote, {
+    isAuthorized: async (model: Quote | Object, user: User) => {
+        return Quote.fromJson(model)?.idCompany == user?.idCompany;
+    },
+    listAuthDefaultFilters: (query, user)  => {
+        if (user != null) {
+            if (user.idCompany) {
+                return query.where('idCompany', user.idCompany);
+            }
         }
-        return await query;
-    } 
-
-    static async paginate(queryStr: any, idCompany: number) {
-        let query = Quote.query()
-            .withGraphFetched('responsible')
-            .withGraphFetched('invoices')
-            .withGraphFetched('client')
-            .where('idCompany', idCompany);
-
-        if (queryStr.archived) {
-            query.where('archived', true)
-        } else {
-            query.where('archived', false)
-                .orWhereNull('archived')
-        }
-
-        query.page(queryStr.page ? queryStr.page - 1 : 0, queryStr.pageSize || 5);
-
-        if (queryStr.order && queryStr.orderBy) {
-            query.orderBy(queryStr.orderBy, queryStr.order);
-        }
-
-        return await query.execute();
-    }
-
-    static async getById(id: number): Promise<Quote> {
-        return await Quote.query()
-            .findById(id)
-            .withGraphFetched('lines.vat')
-            .withGraphFetched('responsible.company')
-            .withGraphFetched('client.company')
-            .withGraphFetched('invoices') as Quote;
-    }
-
-    static async delete(id: number) {
-
-        return await Quote.query().updateAndFetchById(id, { archived: true });
-        //return await Quote.query().deleteById(id)
-    }
-
-    static async create(body: any, auth: User) {
-        const lastQuote = await Quote.query().where('idCompany', auth.idCompany as number).orderBy('id', "desc").first();
-
-        let identifier: string = +(lastQuote?.identifier || "") + 1 + "";
-
-        return await Quote.query().upsertGraphAndFetch({
-            ...body,
-            identifier,
-            idCompany: auth.idCompany,
-            idResponsible: auth.id,
-            status: 'draft'
-        }, { relate: true });
-    }
-
-    static async update(id: number, body: any) {
-
-        let data = { ...body }
-        delete data.identifier
-        delete data.id
-        return await Quote.query().upsertGraphAndFetch({
-            id,
-            ...data
-        }, { relate: true, unrelate: true });
-    }
-
-    static async preview(id: number) {
-        const quote = await QuoteService.getById(id);
-        const html = fs.readFileSync(__dirname + '/../../templates/quote.ejs', 'utf8');
-        const htmlReplaced: string = ejs.render(html, QuoteService._mapQuoteDataToDisplay(quote));
-        return htmlReplaced;
-    }
-
-    static async getPdf(id: number, quote?: Quote): Promise<Stream> {
-        let quoteToPrint = quote || await QuoteService.getById(id);
-        const pdf = await PdfService.printPDF({
-            data: QuoteService._mapQuoteDataToDisplay(quoteToPrint),
-            inputPath: __dirname + '/../../templates/quote.ejs',
-            returnType: "stream",
-        });
-        return pdf as Stream;
-
-    }
-
-
-    static async sendByMail(id: number) {
-        
-        try {
-            const quote = await QuoteService.getById(id);
-            const res = mailService.sendMail({
-                html: ejs.render(fs.readFileSync(__dirname + '/../../templates/quote.ejs', 'utf8'), QuoteService._mapQuoteDataToDisplay(quote)),
-                text: "",
-                subject: "Devis",
-                to: quote?.client?.email as string
-            });
-            return res;
-        } catch(err) {
-            console.error(err);
-            return err;
-        }
-    }
-
-    static _mapQuoteDataToDisplay(quote: Quote) {
+        return query;
+    },
+    forceAuthCreateParams: async (item, user) => {
+        const lastQuote = await Quote.query()
+            .where('idCompany', user.idCompany as number)
+            .orderBy('id', "DESC")
+            .first();
+        const lastIdentifier: number = lastQuote?.identifier ? +lastQuote?.identifier : 0;
         return {
-            ...quote,
-            lines: quote?.lines?.map(line => ({
-                ...line,
-                vatRate: line?.vat?.rate ? `${line?.vat?.rate }%` : '-'
-            })),
+            ...item,
+            idCompany: user.idCompany,
+            idResponsible: user.id,
+            identifier: lastIdentifier + 1
         };
     }
-} 
+}) as IQuoteService;
+
+function _mapQuoteDataToDisplay(quote: Quote) {
+    return {
+        ...quote,
+        lines: quote?.lines?.map(line => ({
+            ...line,
+            vatRate: line?.vat?.rate ? `${line?.vat?.rate }%` : '-'
+        })),
+    };
+}
+
+quoteService.preview = async (quote: Quote) => {
+    const html = fs.readFileSync(__dirname + '/../../templates/quote.ejs', 'utf8');
+    const htmlReplaced: string = ejs.render(html, _mapQuoteDataToDisplay(quote));
+    return htmlReplaced;
+}
+
+quoteService.getPdf = async (quote: Quote) => {
+    let quoteToPrint = quote;
+    const pdf = await PdfService.printPDF({
+        data: _mapQuoteDataToDisplay(quoteToPrint),
+        inputPath: __dirname + '/../../templates/quote.ejs',
+        returnType: "stream",
+    });
+    return pdf as Stream;
+}
+
+quoteService.sendByMail = async (quote: Quote) => {
+    try {
+        const res = await mailService.sendMail({
+            html: ejs.render(fs.readFileSync(__dirname + '/../../templates/quote.ejs', 'utf8'), _mapQuoteDataToDisplay(quote)),
+            text: "",
+            subject: "Devis",
+            to: quote?.client?.email as string
+        });
+        return res;
+    } catch(err) {
+        console.error(err);
+        return err;
+    }
+}
+
+export default quoteService;

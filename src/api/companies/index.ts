@@ -6,12 +6,13 @@ import CompanyController from "./company.controller";
 
 const router = express.Router()
 
+router.use(authMiddleware);
 
-router.get('/', authMiddleware, CompanyController.findAll)
-router.post('/', authMiddleware, CompanyController.create)
-router.put('/:id', authMiddleware, CompanyController.update)
-router.delete('/:id',authMiddleware,  CompanyController.deleteById)
-router.get('/:id', authMiddleware, CompanyController.getById) 
+router.get('/', CompanyController.getAll)
+router.post('/', CompanyController.create)
+router.put('/:id', CompanyController.update)
+router.delete('/:id', CompanyController.delete)
+router.get('/:id', CompanyController.getById) 
 
 
 export default router;

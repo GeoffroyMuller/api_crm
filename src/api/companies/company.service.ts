@@ -1,47 +1,25 @@
 import Company from "./company.model"
 import User from "../users/user.model"
-import { query } from "express"
+import serviceFactory from "../../core/service"
 
-export default class CompanyService {
-    static async findAll(auth: User) {
-        return await Company.query()
-            .where('idCompany', auth?.company?.id || '')
-    }
-
-    static async getById(id: number |string, auth?: User) {
-        const query = Company.query();
-        if (auth) {
-            query
-                .where('idCompany', auth?.company?.id || '')
-                .andWhere('id', id);
-        } else {
-            query.where('id', id);
+const companyService = serviceFactory(Company, {
+    listAuthDefaultFilters: (query, user)  => {
+        if (user != null) {
+            if (user.idCompany) {
+                return query.where('idCompany', user.idCompany);
+            }
         }
-        return await query.first()
+        return query;
+    },
+    isAuthorized: async (model: Company | Object, user: User) => {
+        return Company.fromJson(model)?.idCompany == user?.idCompany;
+    },
+    forceAuthCreateParams: (item, user) => {
+        return {
+            ...item,
+            idCompany: user?.idCompany
+        };
     }
+});
 
-    static async delete(id: number, auth: User) {
-        const company = await Company.query().findById(id);
-        if (company?.idCompany == auth?.company?.id) {
-            return await Company.query().deleteById(id)
-        } else {
-            return undefined
-        }
-    }
-
-    static async create(body: any, auth: User) {
-        return await Company.query().insertAndFetch({
-            ...body,
-            idCompany: auth?.company?.id || ''
-        })
-    }
-
-    static async update(id: number, body: any, auth: User) {
-        return await Company.query().updateAndFetchById(id, {
-            ...body,
-            idCompany: auth?.company?.id || ''
-        })
-    }
-
-
-} 
+export default companyService;

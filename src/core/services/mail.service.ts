@@ -19,20 +19,18 @@ async function sendMail({
     subject: string;
 }) {
 
-    if (process.env.NODE_ENV === "dev") {
-        console.log("send_mail", {
-            from,
-            to,
-            html,
-            text,
-            subject
-        })
-        return undefined;
-    } 
+    console.log("send_mail", {
+        from,
+        to,
+        html,
+        text,
+        subject
+    })
+    return undefined;
     // Uncomment below two lines to configure authorization using: partner-key
     // var partnerKey = defaultClient.authentications['partner-key'];
     // partnerKey.apiKey = 'YOUR API KEY';
-    var apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+    /* var apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
     var sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail(); // SendSmtpEmail | Values to send a transactional email
 
     sendSmtpEmail = {
@@ -47,7 +45,7 @@ async function sendMail({
 
     const response = await apiInstance.sendTransacEmail(sendSmtpEmail);
     console.log(response);
-    return response;
+    return response; */
 }
 
 export default {

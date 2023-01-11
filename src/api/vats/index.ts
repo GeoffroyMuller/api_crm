@@ -4,10 +4,12 @@ import VatController from "./vat.controller";
 
 const router = express.Router()
 
-router.get('/', authMiddleware, VatController.findAll)
-router.post('/', authMiddleware, VatController.create)
-router.put('/:id', authMiddleware, VatController.update)
-router.delete('/:id',authMiddleware,  VatController.deleteById)
+router.use(authMiddleware);
+
+router.get('/', VatController.getAll)
+router.post('/', VatController.create)
+router.put('/:id', VatController.update)
+router.delete('/:id', VatController.delete)
 
 
 export default router;

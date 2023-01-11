@@ -1,60 +1,48 @@
-import { Request, Response } from "express";
 import { Stream } from "stream";
-import { IAuthRequest } from "../auth/auth.middleware";
-import User from "../users/user.model";
-import QuoteService from "./quote.service";
+import controllerFactory from "../../core/controller";
+import QuoteService from "./quote.service"; 
 
-async function paginate(req: IAuthRequest, res: Response) {
-    res.json(await QuoteService.paginate(req.query, req.auth?.idCompany as number))
-}
+const quoteController = controllerFactory(QuoteService);
 
-async function getById(req: IAuthRequest, res: Response) {
-    res.json(await QuoteService.getById(req.params.id as unknown as number))
-}
+quoteController.preview = async (req, res) => {
+    const quote = await QuoteService.getById(req.params.id, [
+        "client.company", "responsible.company", "lines.vat"
+    ]);
+    if (await QuoteService.isAuthorized(quote, req.auth)) {
+        return res.send(await QuoteService.preview(quote));
+    }
+    return res.status(401).end();
+};
 
-async function preview(req: IAuthRequest, res: Response) {
-    res.send(await QuoteService.preview(req.params.id as unknown as number));
-}
+quoteController.getPdf = async (req, res) => {
+    const quote = await QuoteService.getById(req.params.id, [
+        "client.company", "responsible.company", "lines.vat"
+    ]);
 
-async function sendByMail(req: IAuthRequest, res: Response) {
-    res.json(await QuoteService.sendByMail(req.params.id as unknown as number))
-}
-
-async function getPdf(req: IAuthRequest, res: Response) {
-    const quote = await QuoteService.getById(req.params.id as unknown as number);
+    if (!await QuoteService.isAuthorized(quote, req.auth)) {
+        return res.status(401).end();
+    }
 
     res.writeHead(200, {
         'Content-Type': 'application/pdf',
         'Content-disposition': `attachment; filename=devis_${quote?.identifier}.pdf`,
     });
 
-    const pdf: Stream = await QuoteService.getPdf(req.params.id as unknown as number, quote) as Stream;
+    const pdf: Stream = await QuoteService.getPdf(quote) as Stream;
     pdf.pipe(res);
-
+    return res;
 }
 
+quoteController.sendByMail = async (req, res) => {
+    const quote = await QuoteService.getById(req.params.id, [
+        "client.company", "responsible.company", "lines.vat"
+    ]);
 
-async function create(req: IAuthRequest, res: Response) {
-    res.json(await QuoteService.create(req.body, req.auth as User))
+    if (!await QuoteService.isAuthorized(quote, req.auth)) {
+        return res.status(401).end();
+    }
+
+    return res.json(await QuoteService.sendByMail(quote))
 }
 
-async function update(req: IAuthRequest, res: Response) {
-    res.json(await QuoteService.update(req.params.id as unknown as number, req.body))
-}
-
-
-async function deleteById(req: IAuthRequest, res: Response) {
-    res.json(await QuoteService.delete(req.params.id as unknown as number))
-}
-
-
-export default {
-    paginate,
-    deleteById,
-    update,
-    create,
-    getById,
-    getPdf,
-    preview,
-    sendByMail
-}
+export default quoteController;
