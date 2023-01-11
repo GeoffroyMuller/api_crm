@@ -36,10 +36,25 @@ const quoteService = serviceFactory<Quote>(Quote, {
             ...item,
             idCompany: user.idCompany,
             idResponsible: user.id,
-            identifier: lastIdentifier + 1
+            identifier: lastIdentifier + 1,
+            status: 'draft'
         };
     }
 }) as IQuoteService;
+
+quoteService.create = async (body: any) => {
+    return await Quote.query().upsertGraphAndFetch({
+        ...body,
+    }, { relate: true }) as unknown as Quote;
+}
+
+quoteService.update = async (body: any) => {
+    return await Quote.query().upsertGraphAndFetch({
+        id: body.id,
+        ...body,
+    }, { relate: true, unrelate: true }) as unknown as Quote; 
+    
+}
 
 function _mapQuoteDataToDisplay(quote: Quote) {
     return {
