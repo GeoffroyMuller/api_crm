@@ -1,8 +1,8 @@
 import { Stream } from "stream";
 import Quote from "./quote.model"
 import User from "../users/user.model";
-import PdfService from "../../services/pdf.service";
-import mailService from "../../services/mail.service";
+import PdfService from "../../core/services/pdf.service";
+import mailService from "../../core/services/mail.service";
 import serviceFactory, { Service } from "../../core/service";
 const fs = require('fs');
 let ejs = require('ejs');

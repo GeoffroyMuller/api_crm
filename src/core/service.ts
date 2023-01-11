@@ -1,6 +1,7 @@
 import { query } from "express";
 import { Model, ModelClass, QueryBuilderType, RelationExpression } from "objection";
 import User from "../api/users/user.model";
+import { defaultHandleFilters } from "./utils";
 
 type ID = string | number;
 
@@ -23,7 +24,7 @@ export type ServiceFactoryOptions<T extends Model> = {
 };
 
 const serviceFactory = <T extends Model>(model: ModelClass<T>, opts?: ServiceFactoryOptions<T>): Service<T> => {
-  const _handleFilters = opts?.handleFilters || ((query) => query);
+  const _handleFilters = opts?.handleFilters || defaultHandleFilters;
   const _listAuthDefaultFilters = opts?.listAuthDefaultFilters || ((query) => query);
   const _isAuthorized = opts?.isAuthorized || (() => true);
   const _forceAuthCreateParams = opts?.forceAuthCreateParams || ((item) => item);
