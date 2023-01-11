@@ -27,14 +27,19 @@ const controllerFactory: ControllerFactory = (service, opts = undefined) => {
 
 
   return {
+    paginate: async (req: IAuthRequest, res: Response) => {
+      try {
+        const filters = req.query;
+        const items = await service.paginate(_getRelationArray(req), filters, req.auth);
+        return res.status(200).json(items);
+      } catch (err) {
+        console.log(err);
+        return res.status(500).end();
+      }
+    },
     getAll: async (req: IAuthRequest, res: Response) => {
       try {
-        const filters = {
-          ...(req.params.filters!=null && typeof req.params.filters === 'object' 
-            ? req.params.filters 
-            : {}
-          )
-        };
+        const filters = req.query;
         const items = await service.getAll(_getRelationArray(req), filters, req.auth);
         return res.status(200).json(items);
       } catch (err) {
@@ -83,7 +88,7 @@ const controllerFactory: ControllerFactory = (service, opts = undefined) => {
             message: "Item not found",
           });
         }
-        item = {id: req.params.id, ...req.body};
+        item = {...item, ...req.body, id: req.params.id};
         if (!await service.isAuthorized(item, req.auth)) {
           return res.status(401).end();
         }

@@ -71,7 +71,6 @@ export default class InvoiceService {
     static async preview(id: number) {
         const invoice = await InvoiceService.getById(id);
         const html = fs.readFileSync(__dirname + '/../templates/invoice.ejs', 'utf8');
-        console.log({invoice})
         const htmlReplaced: string = ejs.render(html, JSON.parse(invoice?.jsonCopy || ''));
         return htmlReplaced;
     }

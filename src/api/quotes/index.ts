@@ -4,13 +4,15 @@ import authMiddleware from "../auth/auth.middleware";
 
 const router = express.Router()
 
-router.get('/', authMiddleware, QuoteController.paginate)
-router.post('/', authMiddleware, QuoteController.create)
-router.put('/:id', authMiddleware, QuoteController.update)
-router.delete('/:id',authMiddleware,  QuoteController.deleteById)
-router.get('/:id', authMiddleware, QuoteController.getById)
-router.get('/:id/pdf', authMiddleware, QuoteController.getPdf)
-router.get('/:id/preview', authMiddleware, QuoteController.preview)
-router.post('/:id/send_mail', authMiddleware, QuoteController.sendByMail)
+router.use(authMiddleware)
+
+router.get('/', QuoteController.paginate)
+router.post('/', QuoteController.create)
+router.put('/:id', QuoteController.update)
+router.delete('/:id', QuoteController.delete)
+router.get('/:id', QuoteController.getById)
+router.get('/:id/preview', QuoteController.preview)
+router.get('/:id/pdf', QuoteController.getPdf)
+router.post('/:id/send_mail', QuoteController.sendByMail)
 
 export default router;

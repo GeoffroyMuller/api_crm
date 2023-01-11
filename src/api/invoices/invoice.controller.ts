@@ -36,7 +36,6 @@ async function deleteById(req: IAuthRequest, res: Response) {
 }
 
 async function preview(req: IAuthRequest, res: Response) {
-    console.log({id: req.params.id})
     res.send(await InvoiceService.preview(req.params.id as unknown as number));
 }
 

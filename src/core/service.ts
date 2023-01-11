@@ -6,6 +6,7 @@ type ID = string | number;
 
 export interface Service<T extends Model> {
     getAll: (relations: RelationExpression<T>[], filters: any, auth: User) => Promise<T[]>;
+    paginate: (relations: RelationExpression<T>[], filters: any, auth: User) => Promise<T[]>;
     getById:  (id: ID, relations?: RelationExpression<T>[], filters?: any) => Promise<T>;
     create: (item: any) => Promise<T>;
     update: (item: any) => Promise<T>;
@@ -13,7 +14,7 @@ export interface Service<T extends Model> {
     
     isAuthorized: (model: T, filters: any) => boolean | Promise<boolean>;
     forceAuthCreateParams: (item: {[key: string]: any}, user: User) => any;
-    //[key: string]: (...args: any) => any;
+    [key: string]: (...args: any) => any;
 } 
 export type ServiceFactoryOptions<T extends Model> = {
   handleFilters?: (query: QueryBuilderType<T>, filters: any) => QueryBuilderType<T>;
@@ -27,7 +28,7 @@ const serviceFactory = <T extends Model>(model: ModelClass<T>, opts?: ServiceFac
   const _listAuthDefaultFilters = opts?.listAuthDefaultFilters || ((query) => query);
   const _isAuthorized = opts?.isAuthorized || (() => true);
   const _forceAuthCreateParams = opts?.forceAuthCreateParams || ((item) => item);
-  
+
   return {
     getAll: async (relations: RelationExpression<T>[], filters: any, auth: User) => {
       const query = model.query();
@@ -40,8 +41,18 @@ const serviceFactory = <T extends Model>(model: ModelClass<T>, opts?: ServiceFac
       _listAuthDefaultFilters(query, auth);
       return query.execute() as Promise<T[]>;
     },
-
-    
+    paginate: async (relations: RelationExpression<T>[], filters: any, auth: User) => {
+      const query = model.query();
+      if (Array.isArray(relations)) {
+        for (const relation of relations) {
+          query.withGraphFetched(relation);
+        }
+      }
+      query.page(filters.page ? filters.page - 1 : 0, filters.pageSize || 5);
+      _handleFilters(query, filters);
+      _listAuthDefaultFilters(query, auth);
+      return query.execute() as Promise<T[]>;
+    },
     getById: async (id: ID, relations?: RelationExpression<T>[], filters?: any) => {
       const query = model.query();
       if (Array.isArray(relations)) {
