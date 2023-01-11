@@ -40,7 +40,7 @@ async function create(body: any, auth: User) {
   return await Product.query().insertGraphAndFetch({
     ...body,
     idCompany: auth.idCompany,
-    stock: body.stock != null ? body.stock : 0
+    stock: body.stock != null ? body.stock : 0,
   });
 }
 
@@ -50,8 +50,9 @@ async function update(id: number, body: any, auth: User) {
       ...body,
       id,
       idCompany: auth.idCompany,
-      stock: body.stock != null ? body.stock : 0
-    }
+      stock: body.stock != null ? body.stock : 0,
+    },
+    { relate: true, unrelate: true }
   );
 }
 
