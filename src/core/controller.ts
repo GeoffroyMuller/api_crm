@@ -3,10 +3,10 @@ import { Model } from "objection";
 import { IAuthRequest } from "../api/auth/auth.middleware";
 import { Service } from "./service";
 
-type ControllerFactoryOptions<T extends Model> = {
+export type ControllerFactoryOptions<T extends Model> = {
 };
 
-type ControllerFactory = <T extends Model>(
+export type ControllerFactory = <T extends Model>(
   service: Service<T>,
   opts?: ControllerFactoryOptions<T>
 ) => {
@@ -63,7 +63,7 @@ const controllerFactory: ControllerFactory = (service, opts = undefined) => {
     },
     create: async (req: IAuthRequest, res: Response) => {
       try {
-        const item = req.body;
+        const item = await service.forceAuthCreateParams(req.body, req.auth);
         if (!await service.isAuthorized(item, req.auth)) {
           return res.status(401).end();
         }

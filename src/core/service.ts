@@ -12,18 +12,21 @@ export interface Service<T extends Model> {
     remove:  (id: ID) => Promise<void>;
     
     isAuthorized: (model: T, filters: any) => boolean | Promise<boolean>;
-    [key: string]: (...args: any) => any;
+    forceAuthCreateParams: (item: {[key: string]: any}, user: User) => any;
+    //[key: string]: (...args: any) => any;
 } 
-type ServiceFactoryOptions<T extends Model> = {
+export type ServiceFactoryOptions<T extends Model> = {
   handleFilters?: (query: QueryBuilderType<T>, filters: any) => QueryBuilderType<T>;
   isAuthorized?: (model: T, user: User) => boolean | Promise<boolean>;
   listAuthDefaultFilters?: (query: QueryBuilderType<T>, user: User) => QueryBuilderType<T>;
+  forceAuthCreateParams?: (item: {[key: string]: any}, user: User) => any;
 };
 
 const serviceFactory = <T extends Model>(model: ModelClass<T>, opts?: ServiceFactoryOptions<T>): Service<T> => {
   const _handleFilters = opts?.handleFilters || ((query) => query);
   const _listAuthDefaultFilters = opts?.listAuthDefaultFilters || ((query) => query);
   const _isAuthorized = opts?.isAuthorized || (() => true);
+  const _forceAuthCreateParams = opts?.forceAuthCreateParams || ((item) => item);
   
   return {
     getAll: async (relations: RelationExpression<T>[], filters: any, auth: User) => {
@@ -59,7 +62,8 @@ const serviceFactory = <T extends Model>(model: ModelClass<T>, opts?: ServiceFac
       await model.query().findById(id).delete().execute();
       return;
     },
-    isAuthorized: _isAuthorized
+    isAuthorized: _isAuthorized,
+    forceAuthCreateParams: _forceAuthCreateParams
   };
 };
 

@@ -20,7 +20,7 @@ const clientService = serviceFactory(Client, {
             }
         }
         return query;
-    }
+    },
 });
 
 export default clientService;
