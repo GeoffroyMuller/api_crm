@@ -9,6 +9,7 @@ export default class Product extends Model {
   description?: string;
   price?: number;
   isNumeraryStock?: boolean;
+  stockManagement?: "none" | "numerary" | "physical";
   stock?: number;
 
   products_real?: Array<ProductReal>;
@@ -34,6 +35,6 @@ export default class Product extends Model {
         from: "products.id",
         to: "product_fields.idProduct",
       },
-    }
+    },
   };
 }
