@@ -85,6 +85,7 @@ const handleFiltersNe: HandleFiltersFunction = (query, filters, or) => {
   return _applyQueryFilters(query, filters, "$ne", "!=", (val) => val, or);
 }
 
+
 const handleFilters: HandleFiltersFunction = (query, filters, or) => {
   handleFiltersOr(query, filters);
   handleFiltersAnd(query, filters);
