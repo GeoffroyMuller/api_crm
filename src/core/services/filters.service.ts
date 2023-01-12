@@ -1,5 +1,11 @@
 import { Model, QueryBuilderType } from "objection";
 
+export type HandleFiltersFunction = <T extends Model>(
+  query: QueryBuilderType<T>,
+  filters: any,
+  or?: boolean
+) => QueryBuilderType<T>;
+
 function _isFinalValue(value: any) {
   return (
     typeof value === "string" ||
@@ -45,10 +51,7 @@ function _applyQueryFilters<T extends Model>(
   return query;
 }
 
-function handleFiltersOr<T extends Model>(
-  query: QueryBuilderType<T>,
-  filters: any
-): QueryBuilderType<T> {
+const handleFiltersOr: HandleFiltersFunction = (query, filters) => {
   if (filters?.$or != null && typeof filters.$or === "object") {
     if (typeof filters.$or === "object") {
       query.where((builder) => {
@@ -61,22 +64,16 @@ function handleFiltersOr<T extends Model>(
   return query;
 }
 
-function handleFiltersEq<T extends Model>(
-  query: QueryBuilderType<T>,
-  filters: any,
-  or?: boolean
-): QueryBuilderType<T> {
-  _applyQueryFilters(query, filters, "$eq", "=", (val) => val, or);
-  return query;
+const handleFiltersEq: HandleFiltersFunction = (query, filters, or) => {
+  return _applyQueryFilters(query, filters, "$eq", "=", (val) => val, or);
 }
 
-function handleFiltersContains<T extends Model>(
-  query: QueryBuilderType<T>,
-  filters: any,
-  or?: boolean
-): QueryBuilderType<T> {
-  _applyQueryFilters(query, filters, "$contains", "like", (val) => `%${val}%`, or);
-  return query;
+const handleFiltersNe: HandleFiltersFunction = (query, filters, or) => {
+  return _applyQueryFilters(query, filters, "$ne", "!=", (val) => val, or);
+}
+
+const handleFiltersContains: HandleFiltersFunction = (query, filters, or) => {
+  return _applyQueryFilters(query, filters, "$contains", "like", (val) => `%${val}%`, or);
 }
 
 function handleFilters<T extends Model>(
@@ -86,6 +83,7 @@ function handleFilters<T extends Model>(
   handleFiltersEq(query, filters);
   handleFiltersContains(query, filters);
   handleFiltersOr(query, filters);
+  handleFiltersNe(query, filters);
   return query;
 }
 
@@ -93,5 +91,6 @@ export default {
   handleFilters,
   handleFiltersEq,
   handleFiltersOr,
+  handleFiltersNe,
   handleFiltersContains,
 };
