@@ -4,6 +4,7 @@ import User from "../users/user.model";
 import PdfService from "../../core/services/pdf.service";
 import mailService from "../../core/services/mail.service";
 import serviceFactory, { Service } from "../../core/service";
+import { merge } from "lodash";
 const fs = require('fs');
 let ejs = require('ejs');
 
@@ -57,13 +58,28 @@ quoteService.update = async (body: any) => {
 }
 
 function _mapQuoteDataToDisplay(quote: Quote) {
-    return {
+    return merge(
+    {
         ...quote,
         lines: quote?.lines?.map(line => ({
             ...line,
             vatRate: line?.vat?.rate ? `${line?.vat?.rate }%` : '-'
-        })),
-    };
+        })) || [],
+    },
+    {
+        client: {
+            firstname: "",
+            lastname: "",
+            company: {name: ""}
+        },
+        responsible: {
+            firstname: "",
+            lastname: "",
+            company: {name: ""}
+        },
+        modalities: "",
+        footer: "",
+    });
 }
 
 quoteService.preview = async (quote: Quote) => {
