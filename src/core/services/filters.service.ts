@@ -55,9 +55,18 @@ const handleFiltersOr: HandleFiltersFunction = (query, filters) => {
   if (filters?.$or != null && typeof filters.$or === "object") {
     if (typeof filters.$or === "object") {
       query.where((builder) => {
-        handleFiltersEq(builder, filters.$or, true);
-        handleFiltersContains(builder, filters.$or, true);
-        return builder;
+        return handleFilters(builder, filters.$or, true);
+      });
+    }
+  }
+  return query;
+}
+
+const handleFiltersAnd: HandleFiltersFunction = (query, filters) => {
+  if (filters?.$and != null && typeof filters.$and === "object") {
+    if (typeof filters.$and === "object") {
+      query.where((builder) => {
+        return handleFilters(builder, filters.$and, false);
       });
     }
   }
@@ -68,29 +77,28 @@ const handleFiltersEq: HandleFiltersFunction = (query, filters, or) => {
   return _applyQueryFilters(query, filters, "$eq", "=", (val) => val, or);
 }
 
-const handleFiltersNe: HandleFiltersFunction = (query, filters, or) => {
-  return _applyQueryFilters(query, filters, "$ne", "!=", (val) => val, or);
-}
-
 const handleFiltersContains: HandleFiltersFunction = (query, filters, or) => {
   return _applyQueryFilters(query, filters, "$contains", "like", (val) => `%${val}%`, or);
 }
 
-function handleFilters<T extends Model>(
-  query: QueryBuilderType<T>,
-  filters: any
-): QueryBuilderType<T> {
-  handleFiltersEq(query, filters);
-  handleFiltersContains(query, filters);
+const handleFiltersNe: HandleFiltersFunction = (query, filters, or) => {
+  return _applyQueryFilters(query, filters, "$ne", "!=", (val) => val, or);
+}
+
+const handleFilters: HandleFiltersFunction = (query, filters, or) => {
   handleFiltersOr(query, filters);
-  handleFiltersNe(query, filters);
+  handleFiltersAnd(query, filters);
+  handleFiltersEq(query, filters, or);
+  handleFiltersContains(query, filters, or);
+  handleFiltersNe(query, filters, or);
   return query;
 }
 
 export default {
   handleFilters,
-  handleFiltersEq,
   handleFiltersOr,
-  handleFiltersNe,
+  handleFiltersAnd,
+  handleFiltersEq,
   handleFiltersContains,
+  handleFiltersNe,
 };
