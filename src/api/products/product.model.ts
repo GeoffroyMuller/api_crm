@@ -19,22 +19,24 @@ export default class Product extends Model {
     return "products";
   }
 
-  static relationMappings = {
-    products_real: {
-      relation: Model.HasManyRelation,
-      modelClass: ProductReal,
-      join: {
-        from: "products.id",
-        to: "products_real.idProduct",
+  static get relationMappings() {
+    return {
+      products_real: {
+        relation: Model.HasManyRelation,
+        modelClass: ProductReal,
+        join: {
+          from: "products.id",
+          to: "products_real.idProduct",
+        },
       },
-    },
-    product_fields: {
-      relation: Model.HasManyRelation,
-      modelClass: ProductField,
-      join: {
-        from: "products.id",
-        to: "product_fields.idProduct",
+      product_fields: {
+        relation: Model.HasManyRelation,
+        modelClass: ProductField,
+        join: {
+          from: "products.id",
+          to: "product_fields.idProduct",
+        },
       },
-    },
-  };
+    };
+  }
 }

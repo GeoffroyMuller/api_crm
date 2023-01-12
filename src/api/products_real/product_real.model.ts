@@ -15,22 +15,26 @@ export default class ProductReal extends Model {
     return "products_real";
   }
 
-  static relationMappings = {
-    product: {
-      relation: Model.BelongsToOneRelation,
-      modelClass: Product,
-      join: {
-        from: "product_real.idProduct",
-        to: "products.id",
+  static get relationMappings() {
+    const ProductModel = require('../products/product.model').default;
+    
+    return {
+      product: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: ProductModel,
+        join: {
+          from: "products_real.idProduct",
+          to: "products.id",
+        },
       },
-    },
-    product_real_fields: {
-      relation: Model.HasManyRelation,
-      modelClass: ProductRealField,
-      join: {
-        from: "products_real.id",
-        to: "product_real_fields.idProductReal",
-      },
+      product_real_fields: {
+        relation: Model.HasManyRelation,
+        modelClass: ProductRealField,
+        join: {
+          from: "products_real.id",
+          to: "product_real_fields.idProductReal",
+        },
+      }
     }
   };
 }
