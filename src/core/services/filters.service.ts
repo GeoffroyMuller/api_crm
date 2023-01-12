@@ -1,60 +1,81 @@
 import { Model, QueryBuilderType } from "objection";
 
-function isFinalValue(value: any) {
+function _isFinalValue(value: any) {
   return (
-    value == null ||
     typeof value === "string" ||
     typeof value === "number" ||
     typeof value === "boolean"
   );
 }
 
-function handleFiltersEq<T extends Model>(
+function _applyQueryFilters<T extends Model>(
   query: QueryBuilderType<T>,
-  filters: any
+  filters: any,
+  operator: string,
+  dbOperator: string,
+  transformValue: (val: any) => any = (val) => val,
+  or?: boolean
 ): QueryBuilderType<T> {
-  if (filters?.$eq != null && typeof filters.$eq === "object") {
-    for (const key of Object.keys(filters.$eq)) {
-      const value = filters.$eq[key];
-      if (isFinalValue(value)) {
-        query.where(`${query.modelClass().tableName}.${key}`, value);
+  if (filters?.[operator] != null && typeof filters?.[operator] === "object") {
+    let firstDone = false;
+    for (const key of Object.keys(filters[operator])) {
+      const value = filters[operator][key];
+      if (_isFinalValue(value)) {
+        query[firstDone && or ? "orWhere" : "where"](
+          `${query.modelClass().tableName}.${key}`,
+          dbOperator,
+          transformValue(value)
+        );
+        firstDone = true;
+      } else if (Array.isArray(value)) {
+        let firstDone2 = false;
+        value.forEach((v) => {
+          if (_isFinalValue(v)) {
+            query[firstDone2 && or ? "orWhere" : "where"](
+              `${query.modelClass().tableName}.${key}`,
+              dbOperator,
+              transformValue(v)
+            );
+            firstDone2 = true;
+          }
+        });
       }
     }
   }
   return query;
 }
 
-function handleFiltersIn<T extends Model>(
+function handleFiltersOr<T extends Model>(
   query: QueryBuilderType<T>,
   filters: any
 ): QueryBuilderType<T> {
-  if (filters?.$in != null && typeof filters.$in === "object") {
-    for (const key of Object.keys(filters.$in)) {
-      const value = filters.$in[key];
-      if (isFinalValue(value)) {
-        query.whereIn(`${query.modelClass().tableName}.${key}`, value);
-      }
+  if (filters?.$or != null && typeof filters.$or === "object") {
+    if (typeof filters.$or === "object") {
+      query.where((builder) => {
+        handleFiltersEq(builder, filters.$or, true);
+        handleFiltersContains(builder, filters.$or, true);
+        return builder;
+      });
     }
   }
+  return query;
+}
+
+function handleFiltersEq<T extends Model>(
+  query: QueryBuilderType<T>,
+  filters: any,
+  or?: boolean
+): QueryBuilderType<T> {
+  _applyQueryFilters(query, filters, "$eq", "=", (val) => val, or);
   return query;
 }
 
 function handleFiltersContains<T extends Model>(
   query: QueryBuilderType<T>,
-  filters: any
+  filters: any,
+  or?: boolean
 ): QueryBuilderType<T> {
-  if (filters?.$contains != null && typeof filters.$contains === "object") {
-    for (const key of Object.keys(filters.$contains)) {
-      const value = filters.$contains[key];
-      if (isFinalValue(value)) {
-        query.where(
-          `${query.modelClass().tableName}.${key}`,
-          "like",
-          `%${value}%`
-        );
-      }
-    }
-  }
+  _applyQueryFilters(query, filters, "$contains", "like", (val) => `%${val}%`, or);
   return query;
 }
 
@@ -63,14 +84,14 @@ function handleFilters<T extends Model>(
   filters: any
 ): QueryBuilderType<T> {
   handleFiltersEq(query, filters);
-  handleFiltersIn(query, filters);
   handleFiltersContains(query, filters);
+  handleFiltersOr(query, filters);
   return query;
 }
 
 export default {
   handleFilters,
   handleFiltersEq,
-  handleFiltersIn,
+  handleFiltersOr,
   handleFiltersContains,
 };
