@@ -8,7 +8,7 @@ const router = express.Router()
 
 router.use(authMiddleware);
 
-router.get('/', CompanyController.getAll)
+router.get('/', CompanyController.paginate)
 router.post('/', CompanyController.create)
 router.put('/:id', CompanyController.update)
 router.delete('/:id', CompanyController.delete)
