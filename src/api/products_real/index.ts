@@ -4,7 +4,7 @@ import ProductRealController from "./product_real.controller";
 
 const router = express.Router()
 
-router.get('/', authMiddleware, ProductRealController.getAll)
+router.get('/', authMiddleware, ProductRealController.paginate)
 router.post('/', authMiddleware, ProductRealController.create)
 router.put('/:id', authMiddleware, ProductRealController.update)
 router.delete('/:id',authMiddleware, ProductRealController.delete)
