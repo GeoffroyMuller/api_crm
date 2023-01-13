@@ -3,6 +3,7 @@ import ProductField from "../products/product_field.model";
 import ProductReal from "./product_real.model";
 
 export default class ProductRealField extends Model {
+  id?: number;
   idProductReal?: number;
   idProductField?: number;
   value?: string | number;
