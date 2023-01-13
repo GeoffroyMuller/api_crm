@@ -20,6 +20,9 @@ productRealService.update = async (body: any) => {
     {
       id: body.id,
       ...body,
+      product_real_fields: body.product_real_fields.map((elem: any)=>{
+        return {...elem, value: JSON.stringify(elem.value)}
+      })
     },
     { relate: true, unrelate: true }
   )) as unknown as ProductReal;
