@@ -13,6 +13,17 @@ export default class ProductField extends Model {
     return "product_fields";
   }
 
+  static get jsonSchema() {
+    return {
+      type: 'object',
+      required: ["name", "type"],
+      properties: {
+        name: { type: 'string', minLength: 1, maxLength: 255 },
+        type: { type: 'string', minLength: 1 }
+      }
+    };
+  }
+
   static relationMappings = {
     product: {
       relation: Model.BelongsToOneRelation,
