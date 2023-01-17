@@ -5,44 +5,44 @@ import QuoteService from "./quote.service";
 const quoteController = controllerFactory(QuoteService);
 
 quoteController.preview = async (req, res) => {
-    const quote = await QuoteService.getById(req.params.id, [
-        "client.company", "responsible.company", "lines.vat"
-    ]);
-    if (await QuoteService.isAuthorized(quote, req.auth)) {
+    try {
+        const quote = await QuoteService.getById(req.params.id, req.auth, [
+            "client.company", "responsible.company", "lines.vat"
+        ]);
         return res.send(await QuoteService.preview(quote));
+    } catch (err) {
+        return quoteController.handleError(req, res, err);
     }
-    return res.status(401).end();
 };
 
 quoteController.getPdf = async (req, res) => {
-    const quote = await QuoteService.getById(req.params.id, [
-        "client.company", "responsible.company", "lines.vat"
-    ]);
-
-    if (!await QuoteService.isAuthorized(quote, req.auth)) {
-        return res.status(401).end();
+    try {
+        const quote = await QuoteService.getById(req.params.id, req.auth, [
+            "client.company", "responsible.company", "lines.vat"
+        ]);
+    
+        res.writeHead(200, {
+            'Content-Type': 'application/pdf',
+            'Content-disposition': `attachment; filename=devis_${quote?.identifier}.pdf`,
+        });
+    
+        const pdf: Stream = await QuoteService.getPdf(quote) as Stream;
+        pdf.pipe(res);
+        return res;
+    } catch (err) {
+        return quoteController.handleError(req, res, err);
     }
-
-    res.writeHead(200, {
-        'Content-Type': 'application/pdf',
-        'Content-disposition': `attachment; filename=devis_${quote?.identifier}.pdf`,
-    });
-
-    const pdf: Stream = await QuoteService.getPdf(quote) as Stream;
-    pdf.pipe(res);
-    return res;
 }
 
 quoteController.sendByMail = async (req, res) => {
-    const quote = await QuoteService.getById(req.params.id, [
-        "client.company", "responsible.company", "lines.vat"
-    ]);
-
-    if (!await QuoteService.isAuthorized(quote, req.auth)) {
-        return res.status(401).end();
+    try {
+        const quote = await QuoteService.getById(req.params.id, req.auth, [
+            "client.company", "responsible.company", "lines.vat"
+        ]);
+        return res.json(await QuoteService.sendByMail(quote))
+    } catch (err) {
+        return quoteController.handleError(req, res, err);
     }
-
-    return res.json(await QuoteService.sendByMail(quote))
 }
 
 export default quoteController;

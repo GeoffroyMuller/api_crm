@@ -11,15 +11,15 @@ const clientService = serviceFactory(Client, {
         const company = await _model.$relatedQuery('company').execute();
         return company == null ?  false : company.idCompany == user.idCompany;
     },
-    listAuthDefaultFilters: (query, user)  => {
-        if (user != null) {
-            if (user.idCompany) {
-                return query
+    async onBeforeFetchList({query, auth, filters, data}) {
+        if (auth != null) {
+            if (auth.idCompany) {
+                query
                     .joinRelated('company')
-                    .where('company.idCompany', user.idCompany);
+                    .where('company.idCompany', auth.idCompany);
             }
         }
-        return query;
+        return {query, auth, filters, data};
     },
 });
 
