@@ -25,10 +25,10 @@ export type ServiceLifeCycleAction<T extends Model> =
 export interface Service<T extends Model> {
     getAll: (relations: RelationExpression<T>[], filters: any, auth: User) => Promise<T[]>;
     paginate: (relations: RelationExpression<T>[], filters: any, auth: User) => Promise<T[]>;
-    getById:  (id: ID, auth: User, relations?: RelationExpression<T>[], filters?: any) => Promise<T>;
+    getById: (id: ID, auth: User, relations?: RelationExpression<T>[], filters?: any) => Promise<T>;
     create: (item: any, auth: User) => Promise<T>;
     update: (item: any, auth: User) => Promise<T>;
-    remove:  (id: ID, auth: User) => Promise<void>;
+    remove: (id: ID, auth: User) => Promise<void>;
     
     isAuthorized: (model: T, auth: User) => boolean | Promise<boolean>;
 

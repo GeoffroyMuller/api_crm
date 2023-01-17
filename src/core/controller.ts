@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Model } from "objection";
+import { Model, ValidationError } from "objection";
 import { IAuthRequest } from "../api/auth/auth.middleware";
 import { AuthError, Service } from "./service";
 
@@ -21,10 +21,13 @@ const controllerFactory: ControllerFactory = (service, opts = undefined) => {
 
   const handleError: ControllerHandleError = opts?.handleError || (
     async (req: IAuthRequest, res: Response, err: any) => {
-      console.error(err);
       if (err instanceof AuthError) {
         return res.status(401).end();
       }
+      if (err instanceof ValidationError) {
+        return res.status(400).json(err.data);
+      }
+      console.error(err);
       return res.status(500).end();
     }
   );
