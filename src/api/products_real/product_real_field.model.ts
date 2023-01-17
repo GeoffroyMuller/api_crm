@@ -15,6 +15,12 @@ export default class ProductRealField extends Model {
     return "product_real_fields";
   }
 
+  static get jsonSchema() {
+    return {
+      required: ["idProductReal", "idProductField"],
+    };
+  }
+
   $formatJson(json: Pojo): Pojo {
     json = super.$formatJson(json);
     if (json.hasOwnProperty("value") && json.value != null) {
