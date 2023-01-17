@@ -32,8 +32,18 @@ function _applyQueryFilters<T extends Model>(
           dbOperator,
           transformValue(value)
         );
-        firstDone = true;
-      } else if (Array.isArray(value)) {
+      } else if (typeof value === 'object' && !!value) {
+        for (const valKey of Object.keys(value)) {
+          query.joinRelated(key);
+          query[firstDone && or ? "orWhere" : "where"](
+            `${key}.${valKey}`,
+            dbOperator,
+            transformValue(value[valKey])
+          );
+        }
+      }
+      firstDone = true;
+      /* else if (Array.isArray(value)) {
         let firstDone2 = false;
         value.forEach((v) => {
           if (_isFinalValue(v)) {
@@ -45,7 +55,7 @@ function _applyQueryFilters<T extends Model>(
             firstDone2 = true;
           }
         });
-      }
+      } */
     }
   }
   return query;

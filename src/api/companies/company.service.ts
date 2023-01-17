@@ -6,7 +6,7 @@ const companyService = serviceFactory(Company, {
     async onBeforeFetchList({query, auth, filters, data}) {
         if (auth != null) {
             if (auth.idCompany) {
-                query.where('idCompany', auth.idCompany);
+                query.where('companies.idCompany', auth.idCompany);
             }
         }
         return {query, auth, filters, data};
