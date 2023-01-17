@@ -4,6 +4,7 @@ import { IAuthRequest } from "../api/auth/auth.middleware";
 import { AuthError, Service } from "./service";
 
 export type ControllerFactoryOptions<T extends Model> = {
+  handleError?: ControllerHandleError;
 };
 
 export type ControllerFactory = <T extends Model>(
@@ -18,12 +19,15 @@ export type ControllerHandleError = (req: IAuthRequest, res: Response, err: any)
 
 const controllerFactory: ControllerFactory = (service, opts = undefined) => {
 
-  const handleError: ControllerHandleError = async (req: IAuthRequest, res: Response, err: any) => {
-    if (err instanceof AuthError) {
-      return res.status(401).end();
+  const handleError: ControllerHandleError = opts?.handleError || (
+    async (req: IAuthRequest, res: Response, err: any) => {
+      console.error(err);
+      if (err instanceof AuthError) {
+        return res.status(401).end();
+      }
+      return res.status(500).end();
     }
-    return res.status(500).end();
-  };
+  );
 
   function _getRelationArray(req: Request): string[] {
     if (Array.isArray(req.query.populate)) {
@@ -95,16 +99,6 @@ const controllerFactory: ControllerFactory = (service, opts = undefined) => {
     delete: async (req: IAuthRequest, res: Response) => {
       try {
         const id = req.params.id;
-        let item = await service.getById(req.params.id, req.auth);
-        if (!await service.isAuthorized(item, req.auth)) {
-          return res.status(401).end();
-        }
-        if (!item) {
-          return res.status(404).json({
-            success: 0,
-            message: "Item not found",
-          });
-        }
         const deletedItem = await service.remove(id, req.auth);
         return res.status(200).json(deletedItem);
       } catch (err) {
