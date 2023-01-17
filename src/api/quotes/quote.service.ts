@@ -19,40 +19,47 @@ const quoteService = serviceFactory<Quote>(Quote, {
     isAuthorized: async (model: Quote | Object, user: User) => {
         return Quote.fromJson(model)?.idCompany == user?.idCompany;
     },
-    listAuthDefaultFilters: (query, user)  => {
-        if (user != null) {
-            if (user.idCompany) {
-                return query.where('idCompany', user.idCompany);
+    async onBeforeFetchList({query, auth, filters, data}) {
+        if (auth != null) {
+            if (auth.idCompany) {
+                query.where('idCompany', auth.idCompany);
             }
         }
-        return query;
+        return {query, auth, filters, data};
     },
-    forceAuthCreateParams: async (item, user) => {
+    async onBeforeCreate({query, auth, filters, data}) {
         const lastQuote = await Quote.query()
-            .where('idCompany', user.idCompany as number)
+            .where('idCompany', auth.idCompany as number)
             .orderBy('id', "DESC")
             .first();
         const lastIdentifier: number = lastQuote?.identifier ? +lastQuote?.identifier : 0;
         return {
-            ...item,
-            idCompany: user.idCompany,
-            idResponsible: user.id,
-            identifier: lastIdentifier + 1,
-            status: 'draft'
+            query, auth, filters,
+            data: {
+                ...data,
+                idCompany: auth.idCompany,
+                idResponsible: auth.id,
+                identifier: lastIdentifier + 1,
+                status: 'draft'
+            }
         };
-    }
+    },
 }) as IQuoteService;
 
-quoteService.create = async (body: any) => {
-    return await Quote.query().upsertGraphAndFetch({
-        ...body,
+quoteService.create = async (body: any, auth) => {
+    const {data, query} = await quoteService.onBeforeCreate({query: Quote.query(), data: body, auth});
+    await quoteService.checkAuthorization(data, auth);
+    return await query.upsertGraphAndFetch({
+        ...data,
     }, { relate: true }) as unknown as Quote;
 }
 
-quoteService.update = async (body: any) => {
-    return await Quote.query().upsertGraphAndFetch({
-        id: body.id,
-        ...body,
+quoteService.update = async (body: any, auth) => {
+    const {data, query} = await quoteService.onBeforeUpdate({query: Quote.query(), data: body, auth});
+    await quoteService.getById(data.id, auth);
+    return await query.upsertGraphAndFetch({
+        id: data.id,
+        ...data,
     }, { relate: true, unrelate: true }) as unknown as Quote; 
     
 }
