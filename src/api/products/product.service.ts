@@ -40,6 +40,9 @@ async function create(body: any, auth: User) {
     ...body,
     idCompany: auth.idCompany,
     stock: body.stock != null ? body.stock : 0,
+    product_fields: body.product_fields?.map((elem: any) => {
+      return { ...elem, props: JSON.stringify(elem.props) };
+    }),
   });
 }
 
@@ -50,6 +53,9 @@ async function update(id: number, body: any, auth: User) {
       id,
       idCompany: auth.idCompany,
       stock: body.stock != null ? body.stock : 0,
+      product_fields: body.product_fields?.map((elem: any) => {
+        return { ...elem, props: JSON.stringify(elem.props) };
+      }),
     },
     { relate: true, unrelate: true }
   );

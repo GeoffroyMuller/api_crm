@@ -1,4 +1,4 @@
-import { Model } from "objection";
+import { Model, Pojo } from "objection";
 import Product from "./product.model";
 
 export default class ProductField extends Model {
@@ -6,6 +6,7 @@ export default class ProductField extends Model {
   idProduct?: number;
   name?: string;
   type?: string;
+  props?: string
 
   product?: Product;
 
@@ -22,6 +23,14 @@ export default class ProductField extends Model {
         type: { type: 'string', minLength: 1 }
       }
     };
+  }
+
+  $formatJson(json: Pojo): Pojo {
+    json = super.$formatJson(json);
+    if (json.hasOwnProperty("props") && json.props != null) {
+      json.props = JSON.parse(json.props);
+    }
+    return json;
   }
 
   static relationMappings = {
