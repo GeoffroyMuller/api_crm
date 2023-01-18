@@ -1,10 +1,5 @@
 import { Model, QueryBuilderType } from "objection";
-
-export type HandleFiltersFunction = <T extends Model>(
-  query: QueryBuilderType<T>,
-  filters: any,
-  or?: boolean
-) => QueryBuilderType<T>;
+import { HandleFiltersFunction } from "./types";
 
 function _isFinalValue(value: any) {
   return (
@@ -32,7 +27,7 @@ function _applyQueryFilters<T extends Model>(
           dbOperator,
           transformValue(value)
         );
-      } else if (typeof value === 'object' && !!value) {
+      } else if (typeof value === "object" && !!value) {
         for (const valKey of Object.keys(value)) {
           query.joinRelated(key);
           query[firstDone && or ? "orWhere" : "where"](
@@ -70,7 +65,7 @@ const handleFiltersOr: HandleFiltersFunction = (query, filters) => {
     }
   }
   return query;
-}
+};
 
 const handleFiltersAnd: HandleFiltersFunction = (query, filters) => {
   if (filters?.$and != null && typeof filters.$and === "object") {
@@ -81,20 +76,26 @@ const handleFiltersAnd: HandleFiltersFunction = (query, filters) => {
     }
   }
   return query;
-}
+};
 
 const handleFiltersEq: HandleFiltersFunction = (query, filters, or) => {
   return _applyQueryFilters(query, filters, "$eq", "=", (val) => val, or);
-}
+};
 
 const handleFiltersContains: HandleFiltersFunction = (query, filters, or) => {
-  return _applyQueryFilters(query, filters, "$contains", "like", (val) => `%${val}%`, or);
-}
+  return _applyQueryFilters(
+    query,
+    filters,
+    "$contains",
+    "like",
+    (val) => `%${val}%`,
+    or
+  );
+};
 
 const handleFiltersNe: HandleFiltersFunction = (query, filters, or) => {
   return _applyQueryFilters(query, filters, "$ne", "!=", (val) => val, or);
-}
-
+};
 
 const handleFilters: HandleFiltersFunction = (query, filters, or) => {
   handleFiltersOr(query, filters);
@@ -103,7 +104,7 @@ const handleFilters: HandleFiltersFunction = (query, filters, or) => {
   handleFiltersContains(query, filters, or);
   handleFiltersNe(query, filters, or);
   return query;
-}
+};
 
 export default {
   handleFilters,
