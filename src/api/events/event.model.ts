@@ -22,7 +22,6 @@ export default class Event extends Model {
   
   $formatJson(json: Pojo): Pojo {
     json = super.$formatJson(json)
-    console.error(json);
     return json
   }
 
