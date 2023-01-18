@@ -8,7 +8,6 @@ let morgan = require('morgan');
 import * as fs from "fs";
 import * as path from "path"; 
 import Routes from './core/routes';
-import authMiddleware from './api/auth/auth.middleware';
 
 const app: Application = express()
 
