@@ -7,7 +7,8 @@ let cookieParser = require('cookie-parser');
 let morgan = require('morgan');
 import * as fs from "fs";
 import * as path from "path"; 
-import Routes from './routes';
+import Routes from './core/routes';
+import authMiddleware from './api/auth/auth.middleware';
 
 const app: Application = express()
 
@@ -26,7 +27,7 @@ app.use(morgan('combined', {
   stream: fs.createWriteStream(path.join(__dirname, '../logs/access.log'), { flags: 'a' }) 
 }))
 
-Routes(app)
+Routes(app, path.join(__dirname, "api"));
 
 app.listen(3002, () => {
   console.log('The application is listening on port 3002!')

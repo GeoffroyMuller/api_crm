@@ -1,8 +1,10 @@
 import { Stream } from "stream";
 import controllerFactory from "../../core/controller";
+import User from "../users/user.model";
+import Quote from "./quote.model";
 import QuoteService from "./quote.service"; 
 
-const quoteController = controllerFactory(QuoteService);
+const quoteController = controllerFactory<Quote, User>(QuoteService);
 
 quoteController.preview = async (req, res) => {
     try {

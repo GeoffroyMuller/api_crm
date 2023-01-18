@@ -2,7 +2,7 @@ import serviceFactory from "../../core/service"
 import User from "../users/user.model";
 import Client from "./client.model"
 
-const clientService = serviceFactory(Client, {
+const clientService = serviceFactory<Client, User>(Client, {
     isAuthorized: async (model: Client | Object, user: User) => {
         const _model = Client.fromJson(model);
         if (_model?.company?.idCompany) {

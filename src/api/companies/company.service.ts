@@ -2,7 +2,7 @@ import Company from "./company.model"
 import User from "../users/user.model"
 import serviceFactory from "../../core/service"
 
-const companyService = serviceFactory(Company, {
+const companyService = serviceFactory<Company, User>(Company, {
     async onBeforeFetchList({query, auth, filters, data}) {
         if (auth != null) {
             if (auth.idCompany) {

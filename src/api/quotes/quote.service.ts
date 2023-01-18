@@ -3,19 +3,20 @@ import Quote from "./quote.model"
 import User from "../users/user.model";
 import PdfService from "../../core/services/pdf.service";
 import mailService from "../../core/services/mail.service";
-import serviceFactory, { Service } from "../../core/service";
+import serviceFactory from "../../core/service";
 import { merge } from "lodash";
+import { Service } from "../../core/types";
 const fs = require('fs');
 let ejs = require('ejs');
 
 
-export interface IQuoteService extends Service<Quote> {
+export interface IQuoteService extends Service<Quote, User> {
     preview: (q: Quote) => Promise<string>;
     sendByMail: (q: Quote) => Promise<any>;
     getPdf: (q: Quote) => Promise<Stream>;
 }
 
-const quoteService = serviceFactory<Quote>(Quote, {
+const quoteService = serviceFactory<Quote, User>(Quote, {
     isAuthorized: async (model: Quote | Object, user: User) => {
         return Quote.fromJson(model)?.idCompany == user?.idCompany;
     },

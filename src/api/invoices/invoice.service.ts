@@ -1,7 +1,9 @@
-import serviceFactory, { Service } from "../../core/service";
+import serviceFactory from "../../core/service";
+import { Service } from "../../core/types";
+import User from "../users/user.model";
 import Invoice from "./invoice.model";
 
-export interface IInvoiceService extends Service<Invoice> {
+export interface IInvoiceService extends Service<Invoice, User> {
 
 }
 

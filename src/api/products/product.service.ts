@@ -1,4 +1,3 @@
-import { query } from "express";
 import Product from "./product.model";
 import User from "../users/user.model";
 import ProductField from "./product_field.model";

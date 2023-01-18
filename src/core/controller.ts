@@ -1,26 +1,12 @@
 import { Request, Response } from "express";
-import { Model, ValidationError } from "objection";
-import { IAuthRequest } from "../api/auth/auth.middleware";
-import { AuthError, Service } from "./service";
+import { ValidationError } from "objection";
+import { AuthError } from "./service";
+import { ControllerFactory, ControllerHandleError, IAuthRequest } from "./types";
 
-export type ControllerFactoryOptions<T extends Model> = {
-  handleError?: ControllerHandleError;
-};
-
-export type ControllerFactory = <T extends Model>(
-  service: Service<T>,
-  opts?: ControllerFactoryOptions<T>
-) => {
-  handleError: ControllerHandleError,
-  [key: string]: (req: IAuthRequest, res: Response, ...args: any) => Promise<Response>;
-};
-
-export type ControllerHandleError = (req: IAuthRequest, res: Response, err: any) => Promise<Response>;
 
 const controllerFactory: ControllerFactory = (service, opts = undefined) => {
-
-  const handleError: ControllerHandleError = opts?.handleError || (
-    async (req: IAuthRequest, res: Response, err: any) => {
+  const handleError: ControllerHandleError<any, any> = opts?.handleError || (
+    async (req: IAuthRequest<any>, res: Response, err: any) => {
       if (err instanceof AuthError) {
         return res.status(401).end();
       }
@@ -45,7 +31,7 @@ const controllerFactory: ControllerFactory = (service, opts = undefined) => {
 
   return {
     handleError,
-    paginate: async (req: IAuthRequest, res: Response) => {
+    paginate: async (req: IAuthRequest<any>, res: Response) => {
       try {
         const filters = req.query;
         const items = await service.paginate(_getRelationArray(req), filters, req.auth);
@@ -54,7 +40,7 @@ const controllerFactory: ControllerFactory = (service, opts = undefined) => {
         return handleError(req, res, err);
       }
     },
-    getAll: async (req: IAuthRequest, res: Response) => {
+    getAll: async (req: IAuthRequest<any>, res: Response) => {
       try {
         const filters = req.query;
         const items = await service.getAll(_getRelationArray(req), filters, req.auth);
@@ -63,7 +49,7 @@ const controllerFactory: ControllerFactory = (service, opts = undefined) => {
         return handleError(req, res, err);
       }
     },
-    getById: async (req: IAuthRequest, res: Response) => {
+    getById: async (req: IAuthRequest<any>, res: Response) => {
       try {
         const id = req.params.id;
         const item = await service.getById(id, req.auth, _getRelationArray(req));
@@ -78,7 +64,7 @@ const controllerFactory: ControllerFactory = (service, opts = undefined) => {
         return handleError(req, res, err);
       }
     },
-    create: async (req: IAuthRequest, res: Response) => {
+    create: async (req: IAuthRequest<any>, res: Response) => {
       try {
         const item = req.body;
         const createdItem = await service.create(item, req.auth);
@@ -87,7 +73,7 @@ const controllerFactory: ControllerFactory = (service, opts = undefined) => {
         return handleError(req, res, err);
       }
     },
-    update: async (req: IAuthRequest, res: Response) => {
+    update: async (req: IAuthRequest<any>, res: Response) => {
       try {
         const item = {...req.body, id: req.params.id};
         const updatedItem = await service.update(item, req.auth);
@@ -99,7 +85,7 @@ const controllerFactory: ControllerFactory = (service, opts = undefined) => {
         return handleError(req, res, err);
       }
     },
-    delete: async (req: IAuthRequest, res: Response) => {
+    delete: async (req: IAuthRequest<any>, res: Response) => {
       try {
         const id = req.params.id;
         const deletedItem = await service.remove(id, req.auth);
