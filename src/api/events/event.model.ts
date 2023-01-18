@@ -10,11 +10,10 @@ export default class Event extends Model {
   summary?: string;
   description?: string;
   location?: string;
-  rrule?: string;
-  organizer?: string;
-  attendee?: string;
-  status?: string;
-
+  recurrence_freq?: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
+  recurrence_interval?: number;
+  recurrence_count?: number;
+  recurrence_until?: string;
 
   idCompany?: number;
   company?: Company;
