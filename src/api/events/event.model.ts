@@ -1,4 +1,4 @@
-import { Model } from "objection";
+import { Model, Pojo } from "objection";
 import Company from "../companies/company.model";
 
 
@@ -18,6 +18,13 @@ export default class Event extends Model {
 
   idCompany?: number;
   company?: Company;
+
+  
+  $formatJson(json: Pojo): Pojo {
+    json = super.$formatJson(json)
+    console.error(json);
+    return json
+  }
 
   static get tableName() {
     return "events";
