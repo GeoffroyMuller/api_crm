@@ -6,7 +6,7 @@ export default class ProductField extends Model {
   idProduct?: number;
   name?: string;
   type?: string;
-  props?: string
+  props?: string;
 
   product?: Product;
 
@@ -16,12 +16,12 @@ export default class ProductField extends Model {
 
   static get jsonSchema() {
     return {
-      type: 'object',
+      type: "object",
       required: ["name", "type"],
       properties: {
-        name: { type: 'string', minLength: 1, maxLength: 255 },
-        type: { type: 'string', minLength: 1 }
-      }
+        name: { type: "string", minLength: 1, maxLength: 255 },
+        type: { type: "string", minLength: 1 },
+      },
     };
   }
 
