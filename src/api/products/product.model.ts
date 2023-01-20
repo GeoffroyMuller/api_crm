@@ -8,7 +8,6 @@ export default class Product extends Model {
   name?: string;
   description?: string;
   price?: number;
-  isNumeraryStock?: boolean;
   stockManagement?: "numerary" | "physical" | null;
   stock?: number;
 

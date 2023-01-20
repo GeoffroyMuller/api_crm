@@ -1,12 +1,17 @@
 import { Model, Pojo } from "objection";
 import Product from "./product.model";
 
+interface IPropProductField {
+  label: string;
+  value: string;
+}
+
 export default class ProductField extends Model {
   id?: number;
   idProduct?: number;
   name?: string;
   type?: string;
-  props?: string;
+  props?: { options: Array<IPropProductField> };
 
   product?: Product;
 
@@ -21,6 +26,7 @@ export default class ProductField extends Model {
       properties: {
         name: { type: "string", minLength: 1, maxLength: 255 },
         type: { type: "string", minLength: 1 },
+        props: { type: "string" },
       },
     };
   }
