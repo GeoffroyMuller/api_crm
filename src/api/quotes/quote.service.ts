@@ -6,6 +6,7 @@ import mailService from "../../core/services/mail.service";
 import serviceFactory from "../../core/service";
 import { merge } from "lodash";
 import { Service } from "../../core/types";
+import QuoteLine from "./quoteline.model";
 const fs = require('fs');
 let ejs = require('ejs');
 
@@ -28,12 +29,21 @@ const quoteService = serviceFactory<Quote, User>(Quote, {
         }
         return {query, auth, filters, data};
     },
+    async onBeforeUpdate({query, auth, filters, data}) {
+        if (data.lines?.length) {
+            data.lines = data.lines.map((val: any, order: number) => ({...val, order}))
+        }
+        return {query, auth, filters, data};
+    },
     async onBeforeCreate({query, auth, filters, data}) {
         const lastQuote = await Quote.query()
             .where('idCompany', auth.idCompany as number)
             .orderBy('id', "DESC")
             .first();
         const lastIdentifier: number = lastQuote?.identifier ? +lastQuote?.identifier : 0;
+        if (data.lines?.length) {
+            data.lines = data.lines.map((val: any, order: number) => ({...val, order}))
+        }
         return {
             query, auth, filters,
             data: {
@@ -58,11 +68,11 @@ quoteService.create = async (body: any, auth) => {
 quoteService.update = async (body: any, auth) => {
     const {data, query} = await quoteService.onBeforeUpdate({query: Quote.query(), data: body, auth});
     await quoteService.getById(data.id, auth);
-    return await query.upsertGraphAndFetch({
+    const quote = await query.upsertGraphAndFetch({
         id: data.id,
         ...data,
-    }, { relate: true, unrelate: true }) as unknown as Quote; 
-    
+    }, { relate: true, unrelate: true }) as unknown as Quote;
+    return quote;
 }
 
 function _mapQuoteDataToDisplay(quote: Quote) {

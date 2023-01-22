@@ -3,6 +3,7 @@ import Client from "../clients/client.model";
 import Invoice from "../invoices/invoice.model";
 import QuoteLine from "./quoteline.model";
 import User from "../users/user.model";
+import { orderBy } from "lodash";
 
 
 
@@ -32,7 +33,10 @@ export default class Quote extends Model {
 
     $formatJson(json: Pojo): Pojo {
         json = super.$formatJson(json)
-        json.identifier = '#' + json.identifier
+        json.identifier = '#' + json.identifier;
+        if (json.lines?.length) {
+            json.lines = orderBy(json.lines, 'order')
+        }
         return json
     }
 
