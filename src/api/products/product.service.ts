@@ -1,71 +1,72 @@
-import Product from "./product.model";
+import serviceFactory from "../../core/service";
 import User from "../users/user.model";
-import ProductField from "./product_field.model";
+import Product from "./product.model";
 
-async function findAll(idCompany: number) {
-  let query = Product.query().where("idCompany", idCompany);
-  return await query;
-}
+const productService = serviceFactory<Product, User>(Product, {
+  isAuthorized: async (model: Product | Object, user: User) => {
+    return Product.fromJson(model)?.idCompany == user?.idCompany;
+  },
+  async onBeforeFetchList({query, auth, filters, data}) {
+    if (auth != null) {
+        if (auth.idCompany) {
+            query.where('idCompany', auth.idCompany);
+        }
+    }
+    return {query, auth, filters, data};
+},
+  async onBeforeCreate({ query, auth, filters, data }) {
+    return {
+      query,
+      auth,
+      filters,
+      data: _mapProductData(data, auth),
+    };
+  },
+  async onBeforeUpdate({ query, auth, filters, data }) {
+    return {
+      query,
+      auth,
+      filters,
+      data: _mapProductData(data, auth),
+    };
+  },
+});
 
-async function paginate(queryStr: any, idCompany: number) {
-  let query = Product.query().where("idCompany", idCompany);
-
-  query.page(queryStr.page ? queryStr.page - 1 : 0, queryStr.pageSize || 5);
-
-  if (queryStr.order && queryStr.orderBy) {
-    query.orderBy(queryStr.orderBy, queryStr.order);
-  }
-
-  return await query.execute();
-}
-
-async function getById(id: number): Promise<Product> {
-  return (await Product.query()
-    .findById(id)
-    .withGraphFetched("products_real")
-    .withGraphFetched("product_fields")) as ProductField as Product;
-}
-
-async function deleteById(id: number, auth: User) {
-  const product = await Product.query().findById(id);
-  if (product?.idCompany == auth?.company?.id) {
-    return await Product.query().deleteById(id);
-  } else {
-    return undefined;
-  }
-}
-
-async function create(body: any, auth: User) {
-  return await Product.query().insertGraphAndFetch({
-    ...body,
+function _mapProductData(product: Product, auth: User) {
+  return {
+    ...product,
     idCompany: auth.idCompany,
-    stock: body.stock != null ? body.stock : 0,
-    product_fields: body.product_fields?.map((elem: any) => {
+    stock: product.stock != null ? product.stock : 0,
+    product_fields: product.product_fields?.map((elem: any) => {
       return { ...elem, props: JSON.stringify(elem.props) };
     }),
-  });
+  };
 }
 
-async function update(id: number, body: any, auth: User) {
-  return await Product.query().upsertGraphAndFetch(
+productService.create = async (body: any, auth) => {
+  const { data, query } = await productService.onBeforeCreate({
+    query: Product.query(),
+    data: body,
+    auth,
+  });
+  await productService.checkAuthorization(data, auth);
+  return (await query.insertGraphAndFetch({ ...data })) as unknown as Product;
+};
+
+productService.update = async (body: any, auth) => {
+  const { data, query } = await productService.onBeforeUpdate({
+    query: Product.query(),
+    data: body,
+    auth,
+  });
+  await productService.getById(data.id, auth);
+  return (await query.upsertGraphAndFetch(
     {
-      ...body,
-      id,
-      idCompany: auth.idCompany,
-      stock: body.stock != null ? body.stock : 0,
-      product_fields: body.product_fields?.map((elem: any) => {
-        return { ...elem, props: JSON.stringify(elem.props) };
-      }),
+      id: data.id,
+      ...data,
     },
     { relate: true, unrelate: true }
-  );
-}
-
-export default {
-  findAll,
-  paginate,
-  update,
-  create,
-  getById,
-  deleteById,
+  )) as unknown as Product;
 };
+
+export default productService;
