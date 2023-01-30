@@ -9,6 +9,15 @@ function _isFinalValue(value: any) {
   );
 }
 
+function _transformValue(val: any) {
+  if (val === 'true' || val === true) {
+    return 1;
+  } else if (val === 'false' || val === false) {
+    return 0;
+  }
+  return val;
+}
+
 function _applyQueryFilters<T extends Model>(
   query: QueryBuilderType<T>,
   filters: any,
@@ -79,22 +88,23 @@ const handleFiltersAnd: HandleFiltersFunction = (query, filters) => {
 };
 
 const handleFiltersEq: HandleFiltersFunction = (query, filters, or) => {
-  return _applyQueryFilters(query, filters, "$eq", "=", (val) => val, or);
+  return _applyQueryFilters(query, filters, "$eq", "=", _transformValue, or);
 };
 
 const handleFiltersContains: HandleFiltersFunction = (query, filters, or) => {
+  
   return _applyQueryFilters(
     query,
     filters,
     "$contains",
     "like",
-    (val) => `%${val}%`,
+    (val) => `%${_transformValue(val)}%`,
     or
   );
 };
 
 const handleFiltersNe: HandleFiltersFunction = (query, filters, or) => {
-  return _applyQueryFilters(query, filters, "$ne", "!=", (val) => val, or);
+  return _applyQueryFilters(query, filters, "$ne", "!=", _transformValue, or);
 };
 
 const handleFilters: HandleFiltersFunction = (query, filters, or) => {
