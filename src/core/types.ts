@@ -52,6 +52,7 @@ export interface Service<
   onBeforeCreate: ServiceLifeCycleAction<T, AuthModel>;
   onBeforeUpdate: ServiceLifeCycleAction<T, AuthModel>;
   onBeforeRemove: ServiceLifeCycleAction<T, AuthModel>;
+  onAfterCreate: ServiceLifeCycleAction<T, AuthModel>;
 }
 export type ServiceFactoryOptions<
   T extends Model,
@@ -68,6 +69,7 @@ export type ServiceFactoryOptions<
   onBeforeCreate?: ServiceLifeCycleAction<T, AuthModel>;
   onBeforeUpdate?: ServiceLifeCycleAction<T, AuthModel>;
   onBeforeRemove?: ServiceLifeCycleAction<T, AuthModel>;
+  onAfterCreate?: ServiceLifeCycleAction<T, AuthModel>;
 };
 
 export interface IAuthRequest<T> extends Request {
