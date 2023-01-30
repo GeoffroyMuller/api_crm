@@ -10,7 +10,8 @@
     "knex": "cd ./node_modules/.bin/ | knex --knexfile src/config/database.ts",
     "migrate:make": "npm run knex migrate:make -- ",
     "migrate": "npm run knex migrate:latest",
-    "migrate:rollback": "npm run knex migrate:rollback"
+    "migrate:rollback": "npm run knex migrate:rollback",
+    "generate:api": "node ./src/core/cli/generateapi.mjs"
   },
   "author": "",
   "license": "ISC",
