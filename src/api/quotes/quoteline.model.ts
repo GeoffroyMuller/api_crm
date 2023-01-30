@@ -1,9 +1,11 @@
 import { Model } from "objection"
+import Product from "../products/product.model";
 import Vat from "../vats/vat.model";
 
 export default class QuoteLine extends Model {
    id?: number;
    idQuote?: number;
+   idProduct?: number;
    description?: string;
    qty?: number;
    unit_price?: number;
@@ -28,6 +30,14 @@ export default class QuoteLine extends Model {
                 to: 'vat.id'
             }
         },
+        product: {
+            relation: Model.BelongsToOneRelation,
+            modelClass: Product,
+            join: {
+                from: 'quote_lines.idProduct',
+                to: 'products.id'
+            }
+        }
     };
 }
 
