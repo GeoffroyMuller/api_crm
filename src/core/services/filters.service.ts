@@ -1,4 +1,4 @@
-import { Model, QueryBuilderType } from "objection";
+import { Model, QueryBuilderType, raw } from "objection";
 import { HandleFiltersFunction } from "./types";
 
 function _isFinalValue(value: any) {
@@ -47,19 +47,6 @@ function _applyQueryFilters<T extends Model>(
         }
       }
       firstDone = true;
-      /* else if (Array.isArray(value)) {
-        let firstDone2 = false;
-        value.forEach((v) => {
-          if (_isFinalValue(v)) {
-            query[firstDone2 && or ? "orWhere" : "where"](
-              `${query.modelClass().tableName}.${key}`,
-              dbOperator,
-              transformValue(v)
-            );
-            firstDone2 = true;
-          }
-        });
-      } */
     }
   }
   return query;
@@ -107,12 +94,54 @@ const handleFiltersNe: HandleFiltersFunction = (query, filters, or) => {
   return _applyQueryFilters(query, filters, "$ne", "!=", _transformValue, or);
 };
 
+const handleFiltersIn: HandleFiltersFunction = (query, filters, or) => {
+  const operator = "$in";
+  const dbOperator = "in";
+
+  if (filters?.[operator] != null && typeof filters?.[operator] === "object") {
+    let firstDone = false;
+    for (const key of Object.keys(filters[operator])) {
+      const value = filters[operator][key];
+      if (Array.isArray(value)) {
+        query[firstDone && or ? "orWhere" : "where"](
+          `${query.modelClass().tableName}.${key}`,
+          dbOperator,
+          raw(`"${value.join('","')}"`)
+        );
+      } else if (_isFinalValue(value)) {
+        query[firstDone && or ? "orWhere" : "where"](
+          `${query.modelClass().tableName}.${key}`,
+          dbOperator,
+          raw(`${_transformValue(value)}`)
+        );
+      } else {
+        for (const valKey of Object.keys(value)) {
+          query.joinRelated(key);
+          query[firstDone && or ? "orWhere" : "where"](
+            `${key}.${valKey}`,
+            dbOperator,
+            raw(
+              Array.isArray(value[valKey]) 
+                ? `"${value[valKey].join('","')}"` 
+                : `${_transformValue(value[valKey])}`
+            )
+          );
+        }
+      }
+     
+      firstDone = true;
+    }
+  }
+  return query;
+};
+
 const handleFilters: HandleFiltersFunction = (query, filters, or) => {
   handleFiltersOr(query, filters);
   handleFiltersAnd(query, filters);
   handleFiltersEq(query, filters, or);
   handleFiltersContains(query, filters, or);
   handleFiltersNe(query, filters, or);
+  handleFiltersIn(query, filters, or);
   return query;
 };
 
