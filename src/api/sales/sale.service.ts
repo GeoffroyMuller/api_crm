@@ -31,13 +31,11 @@ saleService.create = async (body: any, auth) => {
   });
   await saleService.checkAuthorization(data, auth);
   const saleRes: Sale = await query.insert(data).execute();
-  console.error(data.product_lines);
-
   for (const saleProduct of data.product_lines) {
     await saleProductService.create(
       {
         idSale: saleRes.id,
-        idProduct: saleProduct.id,
+        idProduct: saleProduct.idProduct,
         price: saleProduct.saleProductPrice,
         quantity: saleProduct.quantity,
       } as SaleProduct,
@@ -48,8 +46,8 @@ saleService.create = async (body: any, auth) => {
     await saleProductRealService.create(
       {
         idSale: saleRes.id,
-        idProductReal: saleProductReal.id,
-        price: saleProductReal.saleProductPrice,
+        idProductReal: saleProductReal.idProductReal,
+        price: saleProductReal.saleProductRealPrice,
       } as SaleProductReal,
       auth
     );
