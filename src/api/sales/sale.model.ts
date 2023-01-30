@@ -11,8 +11,8 @@ export default class Sale extends Model {
   date?: string;
   created_at?: string;
 
-  products?: Array<Product>;
-  products_real?: Array<ProductReal>;
+  product_lines?: Array<Product>;
+  product_real_lines?: Array<ProductReal>;
   customer?: Client;
 
   static get tableName() {
@@ -26,7 +26,7 @@ export default class Sale extends Model {
     const ClientModel = require("../clients/client.model").default;
 
     return {
-      products: {
+      product_lines: {
         relation: Model.ManyToManyRelation,
         modelClass: ProductModel,
         join: {
@@ -41,7 +41,7 @@ export default class Sale extends Model {
           to: "products.id",
         },
       },
-      productReal: {
+      product_real_lines: {
         relation: Model.ManyToManyRelation,
         modelClass: ProductRealModel,
         join: {
