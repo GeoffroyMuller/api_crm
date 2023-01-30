@@ -71,7 +71,7 @@ quoteService.update = async (body: any, auth) => {
     const quote = await query.upsertGraphAndFetch({
         id: data.id,
         ...data,
-    }, { relate: true, unrelate: true }) as unknown as Quote;
+    }, { relate: true }) as unknown as Quote;
     return quote;
 }
 
