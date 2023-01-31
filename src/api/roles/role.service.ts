@@ -31,5 +31,6 @@ const roleService = serviceFactory<Role, User>(Role, {
     }
 });
 
+
 export default roleService;
 
