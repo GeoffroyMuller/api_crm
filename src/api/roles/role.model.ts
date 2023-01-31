@@ -1,6 +1,6 @@
 
 import { Model } from "objection";
-import Right from "./right.model";
+import Right from "../rights/right.model";
 
 export default class Role extends Model {
   id?: number;
