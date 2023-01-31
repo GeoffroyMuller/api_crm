@@ -5,6 +5,7 @@ import Right from "./right.model";
 export default class Role extends Model {
   id?: number;
   name?: string;
+  rights?: Right[];
 
   static get tableName() {
     return "roles";
