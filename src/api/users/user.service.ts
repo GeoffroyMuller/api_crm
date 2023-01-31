@@ -1,32 +1,45 @@
 import User from "./user.model"
 import bcrypt from 'bcrypt'
+import serviceFactory from "../../core/service"
 
-
-export default class UserService {
-    static async findAll() {
-        return await User.query()
-    }
-
-    static async getById(id: number) {
-        return await User.query().findById(id)
-    }
-
-    static async delete(id: number) {
-        return await User.query().deleteById(id)
-    }
-
-    static async create(body: any) {
-        let data = { ...body }
-        let hash = await bcrypt.hash(data.password, Number(process.env.BCRYPT_SALT) || 10)
-        return await User.query().insertAndFetch({
+const userService = serviceFactory<User, User>(User, {
+    isAuthorized(model, auth) {
+        return User.fromJson(model)?.idCompany == auth?.idCompany;
+    },
+    async onBeforeFetchList({ query, auth, filters, data }) {
+        if (auth != null) {
+          if (auth.idCompany) {
+            query.where("users.idCompany", auth.idCompany);
+          }
+        }
+        return { query, auth, filters, data };
+    },
+    async onBeforeCreate({ query, auth, filters, data }) {
+        return { query, auth, filters, data: {
             ...data,
-            password: hash
-        })
+            idCompany: auth.idCompany
+        }};
+    },
+    async onBeforeUpdate({ query, auth, filters, data }) {
+        return { query, auth, filters, data: {
+            ...data,
+            idCompany: auth.idCompany
+        }};
     }
+});
 
-    static async update(id: number, body: any) {
-        return await User.query().updateAndFetchById(id, body)
-    }
+userService.create = async (body: any, auth) => {
+    const { data, query } = await userService.onBeforeCreate({
+      query: User.query(),
+      data: body,
+      auth,
+    });
+    await userService.checkAuthorization(data, auth);
+    const hash = await bcrypt.hash(data.password, Number(process.env.BCRYPT_SALT) || 10)
+    return await User.query().insertAndFetch({
+        ...data,
+        password: hash
+    });
+};
 
-
-} 
+export default userService;
