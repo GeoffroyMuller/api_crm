@@ -5,6 +5,7 @@ export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('roles', function (table) {
     table.increments('id');
     table.string('name', 150);
+    table.integer('idCompany');
   });
   await knex.schema.createTable('rights', function (table) {
     table.increments('id');
@@ -19,7 +20,7 @@ export async function up(knex: Knex): Promise<void> {
 }
 
 export async function down(knex: Knex): Promise<void> {
+  await knex.schema.dropTable("roles_rights");
   await knex.schema.dropTable("roles");
   await knex.schema.dropTable("rights");
-  await knex.schema.dropTable("roles_rights");
 }
