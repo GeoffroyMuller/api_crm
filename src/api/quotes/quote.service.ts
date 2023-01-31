@@ -26,7 +26,7 @@ const quoteService = serviceFactory<Quote, User>(Quote, {
         query.where("quotes.idCompany", auth.idCompany);
       }
     }
-    query.select("*");
+    query.select("quotes.*");
     query.select(
       raw(`(
         SELECT SUM(quote_lines.unit_price * quote_lines.qty) 
