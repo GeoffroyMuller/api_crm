@@ -13,6 +13,7 @@ export default class QuoteLine extends Model {
    discount_type?: '€' | '%';
    type?: "title" | "product" | "comment" | "discount"
    idVat?: number;
+   product?: Product;
 
    vat?: Vat;
 
