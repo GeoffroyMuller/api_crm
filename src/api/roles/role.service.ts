@@ -18,13 +18,15 @@ const roleService = serviceFactory<Role, User>(Role, {
     async onBeforeCreate({ query, auth, filters, data }) {
         return { query, auth, filters, data: {
             ...data,
-            idCompany: auth.idCompany
+            idCompany: auth.idCompany,
+            rights: Array.isArray(data.rights) ? JSON.stringify(data.rights) : '[]'
         }};
     },
     async onBeforeUpdate({ query, auth, filters, data }) {
         return { query, auth, filters, data: {
             ...data,
-            idCompany: auth.idCompany
+            idCompany: auth.idCompany,
+            rights: Array.isArray(data.rights) ? JSON.stringify(data.rights) : '[]'
         }};
     }
 });

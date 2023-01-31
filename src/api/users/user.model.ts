@@ -1,5 +1,6 @@
 import { Model, Pojo } from "objection"
 import Company from "../companies/company.model"
+import Role from "../roles/role.model"
 
 export default class User extends Model {
 
@@ -11,7 +12,9 @@ export default class User extends Model {
     email?: string
     password?: string
     idCompany?: number;
+    idRole?: number;
     company?: Company;
+    role?: Role;
 
     $formatJson(json: Pojo): Pojo {
         json = super.$formatJson(json)
@@ -30,6 +33,14 @@ export default class User extends Model {
             join: {
                 from: 'users.idCompany',
                 to: 'companies.id'
+            }
+        },
+        role: {
+            relation: Model.BelongsToOneRelation,
+            modelClass: Role,
+            join: {
+                from: 'users.idRole',
+                to: 'roles.id'
             }
         },
         

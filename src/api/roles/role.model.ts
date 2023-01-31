@@ -1,33 +1,21 @@
-
-import { Model } from "objection";
-import Right from "../rights/right.model";
+import { Model, Pojo } from "objection";
 
 export default class Role extends Model {
   id?: number;
   name?: string;
   idCompany?: number;
-  rights?: Right[];
+  rights?: string[];
 
   static get tableName() {
     return "roles";
   }
 
-  static get relationMappings() {
-    return {
-      rights: {
-        relation: Model.ManyToManyRelation,
-        modelClass: Right,
-        join: {
-          from: "roles.id",
-          through: {
-            from: "roles_rights.idRole",
-            to: "roles_rights.idRight",
-          },
-          to: "rights.id",
-        },
-      },
+  $formatJson(json: Pojo): Pojo {
+    json = super.$formatJson(json);
+    if (typeof json.rights === 'string') {
+      json.rights = JSON.parse(json.rights);
     }
-  }
 
-  
+    return json;
+  }
 }
