@@ -36,6 +36,7 @@ export default class Sale extends Model {
             to: "sales_products.idProduct",
             extra: {
               saleProductPrice: "price",
+              quantity: "quantity",
             },
           },
           to: "products.id",
