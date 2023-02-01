@@ -6,7 +6,6 @@ import mailService from "../../core/services/mail.service";
 import serviceFactory from "../../core/service";
 import { merge } from "lodash";
 import { Service } from "../../core/types";
-import QuoteLine from "./quoteline.model";
 import { raw } from "objection";
 const fs = require("fs");
 let ejs = require("ejs");
@@ -27,7 +26,7 @@ const quoteService = serviceFactory<Quote, User>(Quote, {
         query.where("quotes.idCompany", auth.idCompany);
       }
     }
-    query.select("*");
+    query.select("quotes.*");
     query.select(
       raw(`(
         SELECT SUM(quote_lines.unit_price * quote_lines.qty) 

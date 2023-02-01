@@ -1,18 +1,28 @@
-import { Request, Response, NextFunction } from 'express';
-import { AuthRequest } from '../auth/auth.middleware';
+import { Response, NextFunction } from "express";
+import { AuthRequest } from "../auth/auth.middleware";
 
-// todo : a finir 
 export function accessMiddlewareFactory(rights: string | Array<string>) {
-    const rightsArray = Array.isArray(rights) ? rights : [rights];
-    
-    async function middleware(req: AuthRequest, res: Response, next: NextFunction) {
-        console.log(typeof req.auth.role?.rights)
-        const isOK = true;
-        if (isOK) {
-            next();
-        } else {
-            res.status(401).end();
+  const rightsArray = Array.isArray(rights) ? rights : [rights];
+
+  async function middleware(
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+  ) {
+    if (req.auth.role == null) {
+        next();
+    } else {
+      const authRights =
+        req.auth?.role?.rights != null
+          ? JSON.parse(req.auth?.role?.rights)
+          : [];
+      for (const testedRight of rightsArray) {
+        if (!authRights.includes(testedRight)) {
+          return res.status(401).end();
         }
+      }
+      next();
     }
-    return middleware;
+  }
+  return middleware;
 }

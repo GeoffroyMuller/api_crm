@@ -4,7 +4,7 @@ export default class Role extends Model {
   id?: number;
   name?: string;
   idCompany?: number;
-  rights?: string[];
+  rights?: string;
 
   static get tableName() {
     return "roles";
