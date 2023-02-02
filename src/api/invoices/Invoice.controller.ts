@@ -47,5 +47,23 @@ invoiceController.sendByMail = async (req, res) => {
     }
 }
 
+invoiceController.getPayments = async (req, res) => {
+    try {
+        const invoice = await invoiceService.getById(req.params.id, req.auth);
+        return res.json(await invoiceService.getPayments(invoice));
+    } catch (err) {
+        return invoiceController.handleError(req, res, err);
+    }
+}
+
+invoiceController.addPayment = async (req, res) => {
+    try {
+        const invoice = await invoiceService.getById(req.params.id, req.auth);
+        return res.json(await invoiceService.addPayment(invoice, req.body));
+    } catch (err) {
+        return invoiceController.handleError(req, res, err);
+    }
+}
+
 
 export default invoiceController;

@@ -18,4 +18,8 @@ router.get('/:id/pdf', invoiceController.getPdf)
 router.post('/:id/send_mail', invoiceController.sendByMail)
 
 
+router.get('/:id/payments', invoiceController.getPayments);
+router.post('/:id/payments', invoiceController.addPayment);
+
+
 export default router;

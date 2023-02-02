@@ -7,6 +7,7 @@ import { merge } from "lodash";
 import PdfService from "../../core/services/pdf.service";
 import mailService from "../../core/services/mail.service";
 import { raw } from "objection";
+import InvoicePayment from "./invoicepayment.model";
 const fs = require("fs");
 let ejs = require("ejs");
 
@@ -14,6 +15,8 @@ export interface IInvoiceService extends Service<Invoice, User> {
   preview: (q: Invoice) => Promise<string>;
   sendByMail: (q: Invoice) => Promise<any>;
   getPdf: (q: Invoice) => Promise<Stream>;
+  getPayments: (i: Invoice) => Promise<InvoicePayment[]>;
+  addPayment: (i: Invoice, data: any) => Promise<InvoicePayment>;
 }
 
 async function getNextIdentifier(auth: User) {
@@ -153,9 +156,9 @@ invoiceService.preview = async (quote: Invoice) => {
 };
 
 invoiceService.getPdf = async (quote: Invoice) => {
-  let quoteToPrint = quote;
+  let toPrint = quote;
   const pdf = await PdfService.printPDF({
-    data: _mapDataToDisplay(quoteToPrint),
+    data: _mapDataToDisplay(toPrint),
     inputPath: __dirname + "/../../templates/invoice.ejs",
     returnType: "stream",
   });
@@ -178,6 +181,18 @@ invoiceService.sendByMail = async (quote: Invoice) => {
     console.error(err);
     return err;
   }
+};
+
+invoiceService.getPayments = async (i: Invoice) => {
+  return i.$relatedQuery('payments').execute();
+};
+
+
+invoiceService.addPayment = async (i: Invoice, data: any) => {
+  return InvoicePayment.query().insertAndFetch({
+    ...data,
+    idInvoice: i.id
+  });
 };
 
 export default invoiceService;

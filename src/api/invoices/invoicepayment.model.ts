@@ -11,8 +11,18 @@ export default class InvoicePayment extends Model {
         return 'invoice_payments'
     }
 
-    static relationMappings = {
-
+    static relationMappings() {
+        const InvoiceModel = require('./invoice.model').default;
+        return {
+            invoice: {
+                relation: Model.BelongsToOneRelation,
+                modelClass: InvoiceModel,
+                join: {
+                    from: 'invoice_payments.idInvoice',
+                    to: 'invoices.id'
+                }
+            },
+        }
     };
 }
 
