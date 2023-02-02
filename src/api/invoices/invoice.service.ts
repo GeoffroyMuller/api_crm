@@ -36,6 +36,14 @@ const invoiceService = serviceFactory(Invoice, {
         query.where("invoices.idCompany", auth.idCompany);
       }
     }
+    query.select("invoices.*");
+    query.select(
+      raw(`(
+        SELECT SUM(invoice_lines.unit_price * invoice_lines.qty) 
+        FROM invoice_lines 
+        WHERE invoice_lines.idInvoice = invoices.id
+      )`).as("price")
+    );
     return { query, auth, filters, data };
   },
   async onBeforeCreate({ query, auth, filters, data }) {
