@@ -46,6 +46,16 @@ const invoiceService = serviceFactory(Invoice, {
         FROM invoice_lines 
         WHERE invoice_lines.idInvoice = invoices.id
       )`).as("price")
+      
+    );
+    
+    query.select(
+      raw(`(
+        SELECT SUM(invoice_lines.unit_price * invoice_lines.qty) * (vat.rate / 100) 
+        FROM invoice_lines 
+        JOIN vat ON vat.id = invoice_lines.idVat
+        WHERE invoice_lines.idInvoice = invoices.id
+      )`).as("taxes")
     );
     return { query, auth, filters, data };
   },
