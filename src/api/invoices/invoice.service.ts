@@ -158,7 +158,7 @@ function _mapDataToDisplay(invoice: Invoice) {
 
 invoiceService.preview = async (quote: Invoice) => {
   const html = fs.readFileSync(
-    __dirname + "/../../templates/quote.ejs",
+    __dirname + "/../../templates/invoice.ejs",
     "utf8"
   );
   const htmlReplaced: string = ejs.render(html, _mapDataToDisplay(quote));

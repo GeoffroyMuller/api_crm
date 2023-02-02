@@ -25,7 +25,7 @@ invoiceController.getPdf = async (req, res) => {
     
         res.writeHead(200, {
             'Content-Type': 'application/pdf',
-            'Content-disposition': `attachment; filename=devis_${invoice?.identifier}.pdf`,
+            'Content-disposition': `attachment; filename=invoice_${invoice?.identifier}.pdf`,
         });
     
         const pdf: Stream = await invoiceService.getPdf(invoice) as Stream;
