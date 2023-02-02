@@ -22,6 +22,14 @@ const saleService = serviceFactory<Sale, User>(Sale, {
       },
     };
   },
+  async onBeforeUpdate({ query, auth, filters, data }) {
+    return {
+      query,
+      auth,
+      filters,
+      data,
+    };
+  },
 });
 saleService.create = async (body: any, auth) => {
   const { data, query } = await saleService.onBeforeCreate({
@@ -59,6 +67,38 @@ saleService.create = async (body: any, auth) => {
     auth,
   });
   return result;
+};
+saleService.update = async (body: any, auth) => {
+  const { data, query } = await saleService.onBeforeUpdate({
+    query: Sale.query(),
+    data: body,
+    auth,
+  });
+  console.error("========", {
+    data,
+    dataproducts: data.product_lines,
+    dataproductsreal: data.product_real_lines,
+  });
+  await saleService.getById(data.id, auth);
+  return (await query.upsertGraphAndFetch(
+    {
+      id: data.id,
+      product_lines: data.product_lines.map((productLine: any) => {
+        return {
+          id: productLine.id,
+          saleProductPrice: productLine.saleProductPrice,
+          quantity: productLine.quantity,
+        };
+      }),
+      product_real_lines: data.product_real_lines.map((productRealLine: any)=>{
+        return {
+          id: productRealLine.id,
+          saleProductRealPrice: productRealLine.saleProductRealPrice,
+        } 
+      })
+    } as Sale,
+    { relate: true, unrelate: true }
+  )) as unknown as Sale;
 };
 
 export default saleService;
