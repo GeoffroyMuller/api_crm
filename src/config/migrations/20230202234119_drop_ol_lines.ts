@@ -10,7 +10,7 @@ export async function up(knex: Knex): Promise<void> {
 
 
 export async function down(knex: Knex): Promise<void> {
-   /*  await knex.schema.createTable("quote_lines", function (table) {
+   await knex.schema.createTable("quote_lines", function (table) {
         table.increments('id')
         
         table.integer('idQuote')
@@ -41,6 +41,6 @@ export async function down(knex: Knex): Promise<void> {
         table.string('discount_type') // € ou %
         table.string('type') // title | product | comment | discount
         table.integer('order')
-    }) */
+    })
 }
 
