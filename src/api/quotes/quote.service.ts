@@ -44,6 +44,14 @@ const quoteService = serviceFactory<Quote, User>(Quote, {
         WHERE quote_lines.idQuote = quotes.id
       )`).as("price")
     );
+    query.select(
+      raw(`(
+        SELECT SUM(quote_lines.unit_price * quote_lines.qty) * (vat.rate / 100) 
+        FROM quote_lines 
+        JOIN vat ON vat.id = quote_lines.idVat
+        WHERE quote_lines.idQuote = quotes.id
+      )`).as("taxes")
+    );
     return { query, auth, filters, data };
   },
   async onBeforeUpdate({ query, auth, filters, data }) {
