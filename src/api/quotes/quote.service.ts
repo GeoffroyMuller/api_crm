@@ -16,6 +16,16 @@ export interface IQuoteService extends Service<Quote, User> {
   getPdf: (q: Quote) => Promise<Stream>;
 }
 
+async function getNextIdentifier(auth: User) {
+  const last = await Quote.query()
+    .where("idCompany", auth.idCompany as number)
+    .orderBy("id", "DESC")
+    .first();
+  const lastIdentifier: number = last?.identifier ? +last?.identifier : 0;
+
+  return lastIdentifier + 1;
+}
+
 const quoteService = serviceFactory<Quote, User>(Quote, {
   isAuthorized: async (model: Quote | Object, user: User) => {
     return Quote.fromJson(model)?.idCompany == user?.idCompany;
@@ -46,13 +56,6 @@ const quoteService = serviceFactory<Quote, User>(Quote, {
     return { query, auth, filters, data };
   },
   async onBeforeCreate({ query, auth, filters, data }) {
-    const lastQuote = await Quote.query()
-      .where("idCompany", auth.idCompany as number)
-      .orderBy("id", "DESC")
-      .first();
-    const lastIdentifier: number = lastQuote?.identifier
-      ? +lastQuote?.identifier
-      : 0;
     if (data.lines?.length) {
       data.lines = data.lines.map((val: any, order: number) => ({
         ...val,
@@ -67,7 +70,7 @@ const quoteService = serviceFactory<Quote, User>(Quote, {
         ...data,
         idCompany: auth.idCompany,
         idResponsible: auth.id,
-        identifier: lastIdentifier + 1,
+        identifier: await getNextIdentifier(auth),
         status: "draft",
       },
     };
