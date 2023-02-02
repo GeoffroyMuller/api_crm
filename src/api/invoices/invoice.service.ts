@@ -69,8 +69,6 @@ const invoiceService = serviceFactory(Invoice, {
   async onBeforeGetById({ query, auth, filters, data }) {
     query.select("invoices.*");
 
-    console.error(filters)
-
     const populateTotalIndex = ((filters?.populate || []) as string[]).findIndex(p => p === 'total');
     if (populateTotalIndex !== -1) {
       query = withPrice(query);
