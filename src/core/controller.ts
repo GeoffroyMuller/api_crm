@@ -11,6 +11,7 @@ const controllerFactory: ControllerFactory = (service, opts = undefined) => {
         return res.status(401).end();
       }
       if (err instanceof ValidationError) {
+        console.error(err);
         return res.status(400).json(err.data);
       }
       console.error(err);
@@ -52,7 +53,7 @@ const controllerFactory: ControllerFactory = (service, opts = undefined) => {
     getById: async (req: IAuthRequest<any>, res: Response) => {
       try {
         const id = req.params.id;
-        const item = await service.getById(id, req.auth, _getRelationArray(req));
+        const item = await service.getById(id, req.auth, _getRelationArray(req), req.query);
         if (!item) {
           return res.status(404).json({
             success: 0,

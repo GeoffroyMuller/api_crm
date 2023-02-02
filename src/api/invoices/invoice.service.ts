@@ -3,10 +3,10 @@ import serviceFactory from "../../core/service";
 import { Service } from "../../core/types";
 import User from "../users/user.model";
 import Invoice from "./invoice.model";
-import { merge } from "lodash";
+import { filter, merge } from "lodash";
 import PdfService from "../../core/services/pdf.service";
 import mailService from "../../core/services/mail.service";
-import { raw } from "objection";
+import { QueryBuilder, raw } from "objection";
 import InvoicePayment from "./invoicepayment.model";
 const fs = require("fs");
 let ejs = require("ejs");
@@ -29,6 +29,26 @@ async function getNextIdentifier(auth: User) {
   return lastIdentifier + 1;
 }
 
+function withPrice(query: QueryBuilder<Invoice>) {
+  return query.select(
+    raw(`(
+      SELECT SUM(invoice_lines.unit_price * invoice_lines.qty) 
+      FROM invoice_lines 
+      WHERE invoice_lines.idInvoice = invoices.id
+    )`).as("price")
+  );
+}
+function withTaxes(query: QueryBuilder<Invoice>) {
+  return query.select(
+    raw(`(
+      SELECT SUM(invoice_lines.unit_price * invoice_lines.qty) * (vat.rate / 100) 
+      FROM invoice_lines 
+      JOIN vat ON vat.id = invoice_lines.idVat
+      WHERE invoice_lines.idInvoice = invoices.id
+    )`).as("taxes")
+  );
+}
+
 const invoiceService = serviceFactory(Invoice, {
   isAuthorized(model, auth) {
     return Invoice.fromJson(model)?.idCompany == auth?.idCompany;
@@ -40,23 +60,23 @@ const invoiceService = serviceFactory(Invoice, {
       }
     }
     query.select("invoices.*");
-    query.select(
-      raw(`(
-        SELECT SUM(invoice_lines.unit_price * invoice_lines.qty) 
-        FROM invoice_lines 
-        WHERE invoice_lines.idInvoice = invoices.id
-      )`).as("price")
-      
-    );
+    query = withPrice(query);
+    query = withTaxes(query);
     
-    query.select(
-      raw(`(
-        SELECT SUM(invoice_lines.unit_price * invoice_lines.qty) * (vat.rate / 100) 
-        FROM invoice_lines 
-        JOIN vat ON vat.id = invoice_lines.idVat
-        WHERE invoice_lines.idInvoice = invoices.id
-      )`).as("taxes")
-    );
+    
+    return { query, auth, filters, data };
+  },
+  async onBeforeGetById({ query, auth, filters, data }) {
+    query.select("invoices.*");
+
+    console.error(filters)
+
+    const populateTotalIndex = ((filters?.populate || []) as string[]).findIndex(p => p === 'total');
+    if (populateTotalIndex !== -1) {
+      query = withPrice(query);
+      query = withTaxes(query);
+    }
+
     return { query, auth, filters, data };
   },
   async onBeforeCreate({ query, auth, filters, data }) {

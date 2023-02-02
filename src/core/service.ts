@@ -1,6 +1,7 @@
 import {
   Model,
   ModelClass,
+  QueryBuilder,
   QueryBuilderType,
   RelationExpression,
 } from "objection";
@@ -13,6 +14,25 @@ export class AuthError extends Error {
     // Set the prototype explicitly.
     Object.setPrototypeOf(this, AuthError.prototype);
   }
+}
+
+function applyRelations<T extends Model>(
+  query: QueryBuilderType<T>,
+  model: ModelClass<T>,
+  relations: any
+): QueryBuilderType<T> {
+  if (Array.isArray(relations)) {
+    for (const relation of relations) {
+      const relationLevel1 = (relation as string).split('.')[0];
+      // @ts-ignore
+      // TODO: check deep relation existence too
+      if (model.relationMappings[relationLevel1] != null) {
+        query.withGraphFetched(relation);
+      }
+      
+    }
+  }
+  return query;
 }
 
 const serviceFactory = <
@@ -46,12 +66,8 @@ const serviceFactory = <
     relations?: RelationExpression<T>[],
     filters?: any
   ) => {
-    const query = model.query();
-    if (Array.isArray(relations)) {
-      for (const relation of relations) {
-        query.withGraphFetched(relation);
-      }
-    }
+    const query = applyRelations<T>(model.query(), model, relations);
+
     const { query: q, filters: f } = await onBeforeGetById({
       query,
       filters,
