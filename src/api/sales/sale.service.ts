@@ -43,7 +43,7 @@ saleService.create = async (body: any, auth) => {
     await saleProductService.create(
       {
         idSale: saleRes.id,
-        idProduct: saleProduct.idProduct,
+        idProduct: saleProduct.id,
         price: saleProduct.saleProductPrice,
         quantity: saleProduct.quantity,
       } as SaleProduct,
@@ -54,7 +54,7 @@ saleService.create = async (body: any, auth) => {
     await saleProductRealService.create(
       {
         idSale: saleRes.id,
-        idProductReal: saleProductReal.idProductReal,
+        idProductReal: saleProductReal.id,
         price: saleProductReal.saleProductRealPrice,
       } as SaleProductReal,
       auth
@@ -73,11 +73,6 @@ saleService.update = async (body: any, auth) => {
     query: Sale.query(),
     data: body,
     auth,
-  });
-  console.error("========", {
-    data,
-    dataproducts: data.product_lines,
-    dataproductsreal: data.product_real_lines,
   });
   await saleService.getById(data.id, auth);
   return (await query.upsertGraphAndFetch(
