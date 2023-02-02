@@ -74,7 +74,7 @@ export default class Quote extends Model {
             modelClass: QuoteLine,
             join: {
                 from: 'quotes.id',
-                to: 'quote_lines.idQuote'
+                to: QuoteLine.tableName + '.idQuote'
             }
         },
     };

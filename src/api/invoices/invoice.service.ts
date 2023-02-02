@@ -8,6 +8,7 @@ import PdfService from "../../core/services/pdf.service";
 import mailService from "../../core/services/mail.service";
 import { QueryBuilder, raw } from "objection";
 import InvoicePayment from "./invoicepayment.model";
+import InvoiceLine from "./invoiceline.model";
 const fs = require("fs");
 let ejs = require("ejs");
 
@@ -32,19 +33,19 @@ async function getNextIdentifier(auth: User) {
 function withPrice(query: QueryBuilder<Invoice>) {
   return query.select(
     raw(`(
-      SELECT SUM(invoice_lines.unit_price * invoice_lines.qty) 
-      FROM invoice_lines 
-      WHERE invoice_lines.idInvoice = invoices.id
+      SELECT SUM(${InvoiceLine.tableName}.unit_price * ${InvoiceLine.tableName}.qty) 
+      FROM ${InvoiceLine.tableName} 
+      WHERE ${InvoiceLine.tableName}.idInvoice = invoices.id
     )`).as("price")
   );
 }
 function withTaxes(query: QueryBuilder<Invoice>) {
   return query.select(
     raw(`(
-      SELECT SUM(invoice_lines.unit_price * invoice_lines.qty) * (vat.rate / 100) 
-      FROM invoice_lines 
-      JOIN vat ON vat.id = invoice_lines.idVat
-      WHERE invoice_lines.idInvoice = invoices.id
+      SELECT SUM(${InvoiceLine.tableName}.unit_price * ${InvoiceLine.tableName}.qty) * (vat.rate / 100) 
+      FROM ${InvoiceLine.tableName} 
+      JOIN vat ON vat.id = ${InvoiceLine.tableName}.idVat
+      WHERE ${InvoiceLine.tableName}.idInvoice = invoices.id
     )`).as("taxes")
   );
 }

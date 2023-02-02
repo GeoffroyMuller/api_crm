@@ -18,7 +18,7 @@ export default class InvoiceLine extends Model {
 
 
     static get tableName() {
-        return 'invoice_lines'
+        return 'sale_lines'
     }
 
     static relationMappings = {
@@ -26,7 +26,7 @@ export default class InvoiceLine extends Model {
             relation: Model.BelongsToOneRelation,
             modelClass: Vat,
             join: {
-                from: 'invoice_lines.idVat',
+                from: 'sale_lines.idVat',
                 to: 'vat.id'
             }
         },
@@ -34,7 +34,7 @@ export default class InvoiceLine extends Model {
             relation: Model.BelongsToOneRelation,
             modelClass: Product,
             join: {
-                from: 'quote_lines.idProduct',
+                from: 'sale_lines.idProduct',
                 to: 'products.id'
             }
         }

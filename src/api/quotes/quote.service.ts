@@ -7,6 +7,7 @@ import serviceFactory from "../../core/service";
 import { merge } from "lodash";
 import { Service } from "../../core/types";
 import { raw } from "objection";
+import QuoteLine from "./quoteline.model";
 const fs = require("fs");
 let ejs = require("ejs");
 
@@ -39,17 +40,17 @@ const quoteService = serviceFactory<Quote, User>(Quote, {
     query.select("quotes.*");
     query.select(
       raw(`(
-        SELECT SUM(quote_lines.unit_price * quote_lines.qty) 
-        FROM quote_lines 
-        WHERE quote_lines.idQuote = quotes.id
+        SELECT SUM(${QuoteLine.tableName}.unit_price * ${QuoteLine.tableName}.qty) 
+        FROM ${QuoteLine.tableName} 
+        WHERE ${QuoteLine.tableName}.idQuote = quotes.id
       )`).as("price")
     );
     query.select(
       raw(`(
-        SELECT SUM(quote_lines.unit_price * quote_lines.qty) * (vat.rate / 100) 
-        FROM quote_lines 
-        JOIN vat ON vat.id = quote_lines.idVat
-        WHERE quote_lines.idQuote = quotes.id
+        SELECT SUM(${QuoteLine.tableName}.unit_price * ${QuoteLine.tableName}.qty) * (vat.rate / 100) 
+        FROM ${QuoteLine.tableName} 
+        JOIN vat ON vat.id = ${QuoteLine.tableName}.idVat
+        WHERE ${QuoteLine.tableName}.idQuote = quotes.id
       )`).as("taxes")
     );
     return { query, auth, filters, data };

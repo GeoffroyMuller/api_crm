@@ -61,7 +61,7 @@ export default class Invoice extends Model {
             modelClass: InvoiceLine,
             join: {
                 from: 'invoices.id',
-                to: 'invoice_lines.idInvoice'
+                to: InvoiceLine.tableName + '.idInvoice'
             }
         },
         payments: {

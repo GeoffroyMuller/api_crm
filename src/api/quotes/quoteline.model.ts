@@ -19,7 +19,7 @@ export default class QuoteLine extends Model {
 
 
     static get tableName() {
-        return 'quote_lines'
+        return 'sale_lines'
     }
 
     static relationMappings = {
@@ -27,7 +27,7 @@ export default class QuoteLine extends Model {
             relation: Model.BelongsToOneRelation,
             modelClass: Vat,
             join: {
-                from: 'quote_lines.idVat',
+                from: QuoteLine.tableName + '.idVat',
                 to: 'vat.id'
             }
         },
@@ -35,7 +35,7 @@ export default class QuoteLine extends Model {
             relation: Model.BelongsToOneRelation,
             modelClass: Product,
             join: {
-                from: 'quote_lines.idProduct',
+                from: QuoteLine.tableName + '.idProduct',
                 to: 'products.id'
             }
         }
