@@ -202,7 +202,7 @@ invoiceService.sendByMail = async (quote: Invoice) => {
         _mapDataToDisplay(quote)
       ),
       text: "",
-      subject: "Devis",
+      subject: "Facture",
       to: quote?.client?.email as string,
     });
     return res;

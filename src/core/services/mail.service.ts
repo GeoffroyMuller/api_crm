@@ -1,38 +1,32 @@
+import { createTransport } from "nodemailer";
 import { IMailService } from "./types";
-
-var SibApiV3Sdk = require('sib-api-v3-sdk');
-var defaultClient = SibApiV3Sdk.ApiClient.instance;
-
-// Configure API key authorization: api-key
-var apiKey = defaultClient.authentications['api-key'];
-apiKey.apiKey = process.env.SENDIBLUE_API_KEY;
-
-
-
 
 const mailService: IMailService = {
     async sendMail(props) {
         console.log("send_mail", props);
-        return undefined;
-        // Uncomment below two lines to configure authorization using: partner-key
-        // var partnerKey = defaultClient.authentications['partner-key'];
-        // partnerKey.apiKey = 'YOUR API KEY';
-        /* var apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
-        var sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail(); // SendSmtpEmail | Values to send a transactional email
-    
-        sendSmtpEmail = {
-            sender: {
-                email: from || "etienne.robert1698@gmail.com"
+        // create reusable transporter object using the default SMTP transport
+        const transporter = createTransport({
+            host: "localhost",
+            port: 587,
+            secure: false, // true for 465, false for other ports
+            auth: {
+                user: "bot@apicrm.demoapp.fr",
+                pass: "0kot%H049",
             },
-            to: typeof to === 'string' ? [{email: to}] : to.map(e => {email: e}),
-            htmlContent: html,
-            textContent: text,
-            subject,
-        };
-    
-        const response = await apiInstance.sendTransacEmail(sendSmtpEmail);
-        console.log(response);
-        return response; */
+        });
+        
+        return transporter.sendMail(
+            {
+                from: " ",
+                to: props.to,
+                subject: props.subject,
+                html: props.html,
+            },
+        );
+            
+
+
+
     }
 }
 export default mailService;
