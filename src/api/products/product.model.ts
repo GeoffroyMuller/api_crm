@@ -1,10 +1,12 @@
 import { Model } from "objection";
 import ProductField from "./product_field.model";
 import ProductReal from "../products_real/product_real.model";
+import Vat from "../vats/vat.model";
 
 export default class Product extends Model {
   id?: number;
   idCompany?: number;
+  idVat?: number;
   name?: string;
   description?: string;
   price?: number;
@@ -34,6 +36,14 @@ export default class Product extends Model {
         join: {
           from: "products.id",
           to: "product_fields.idProduct",
+        },
+      },
+      vat: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: Vat,
+        join: {
+          from: "products.idVat",
+          to: "vat.id",
         },
       },
     };
