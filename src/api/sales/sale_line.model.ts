@@ -36,6 +36,22 @@ export default class SaleLine extends Model {
           to: "sale_sublines.idSaleLine",
         },
       },
+      vat: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: Vat,
+        join: {
+          from: "sale_lines.idVat",
+          to: "vat.id",
+        },
+      },
+      product: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: Product,
+        join: {
+          from: "sale_lines.idProduct",
+          to: "products.id",
+        },
+      },
     };
   }
 }
