@@ -138,14 +138,14 @@ invoiceService.update = async (body: any, auth) => {
     auth,
   });
   await invoiceService.getById(data.id, auth);
-  const quote = (await query.upsertGraphAndFetch(
+  const invoice = (await query.upsertGraphAndFetch(
     {
       id: data.id,
       ...data,
     },
     { relate: true }
   )) as unknown as Invoice;
-  return quote;
+  return invoice;
 };
 
 function _mapDataToDisplay(invoice: Invoice) {
@@ -175,17 +175,17 @@ function _mapDataToDisplay(invoice: Invoice) {
   );
 }
 
-invoiceService.preview = async (quote: Invoice) => {
+invoiceService.preview = async (invoice: Invoice) => {
   const html = fs.readFileSync(
     __dirname + "/../../templates/invoice.ejs",
     "utf8"
   );
-  const htmlReplaced: string = ejs.render(html, _mapDataToDisplay(quote));
+  const htmlReplaced: string = ejs.render(html, _mapDataToDisplay(invoice));
   return htmlReplaced;
 };
 
-invoiceService.getPdf = async (quote: Invoice) => {
-  let toPrint = quote;
+invoiceService.getPdf = async (invoice: Invoice) => {
+  let toPrint = invoice;
   const pdf = await PdfService.printPDF({
     data: _mapDataToDisplay(toPrint),
     inputPath: __dirname + "/../../templates/invoice.ejs",
@@ -194,16 +194,16 @@ invoiceService.getPdf = async (quote: Invoice) => {
   return pdf as Stream;
 };
 
-invoiceService.sendByMail = async (quote: Invoice) => {
+invoiceService.sendByMail = async (invoice: Invoice) => {
   try {
     const res = await mailService.sendMail({
       html: ejs.render(
         fs.readFileSync(__dirname + "/../../templates/invoice.ejs", "utf8"),
-        _mapDataToDisplay(quote)
+        _mapDataToDisplay(invoice)
       ),
       text: "",
       subject: "Facture",
-      to: quote?.client?.email as string,
+      to: invoice?.client?.email as string,
     });
     return res;
   } catch (err) {

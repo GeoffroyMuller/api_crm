@@ -3,8 +3,6 @@ import { IMailService } from "./types";
 
 const mailService: IMailService = {
     async sendMail(props) {
-        console.log("send_mail", props);
-        // create reusable transporter object using the default SMTP transport
         const transporter = createTransport();
         
         return transporter.sendMail(
@@ -15,10 +13,6 @@ const mailService: IMailService = {
                 html: props.html,
             },
         );
-            
-
-
-
     }
 }
 export default mailService;
