@@ -29,11 +29,5 @@ const RIGHTS = [
             fr: 'créer/modifier/supprimer des clients'
         }
     },
-    {
-        id: "manage_sales",
-        lang: {
-            fr: 'créer/modifier/supprimer des ventes'
-        }
-    },
 ]
 export default RIGHTS;
