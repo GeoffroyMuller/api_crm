@@ -1,8 +1,8 @@
 import { Knex } from "knex";
 
-const tableInvoiceLine = "invoice_line"
-const tableQuoteLine = "quote_line"
-const tableReservationLine = "reservation_line"
+const tableInvoiceLine = "invoice_lines"
+const tableQuoteLine = "quote_lines"
+const tableReservationLine = "reservation_lines"
 
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable(tableInvoiceLine, function (table) {
