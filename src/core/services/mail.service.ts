@@ -3,7 +3,16 @@ import { IMailService } from "./types";
 
 const mailService: IMailService = {
     async sendMail(props) {
-        const transporter = createTransport();
+
+        const transporter = createTransport({
+            host: "127.0.0.1",
+            port: 587,
+            secure: false, // true for 465, false for other ports
+            auth: {
+                user: "bot@apicrm.demoapp.fr",
+                pass: "0kot%H049",
+            },
+        });
         
         return transporter.sendMail(
             {
@@ -13,6 +22,10 @@ const mailService: IMailService = {
                 html: props.html,
             },
         );
+            
+
+
+
     }
 }
 export default mailService;
