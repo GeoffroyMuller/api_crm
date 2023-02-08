@@ -5,7 +5,7 @@ const mailService: IMailService = {
     async sendMail(props) {
 
         const transporter = createTransport({
-            host: "127.0.0.1",
+            host: "smtp.demoapp.fr",
             port: 587,
             secure: false, // true for 465, false for other ports
             auth: {
