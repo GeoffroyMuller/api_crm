@@ -11,6 +11,7 @@ export default class Client extends Model {
     idCompany?: number;
     description?: string;
     company?: Company;
+    idClientCompany?: number;
 
 
     static get tableName() {
@@ -28,7 +29,7 @@ export default class Client extends Model {
             relation: Model.BelongsToOneRelation,
             modelClass: Company,
             join: {
-                from: 'clients.idCompany',
+                from: 'clients.idClientCompany',
                 to: 'companies.id'
             }
         },
