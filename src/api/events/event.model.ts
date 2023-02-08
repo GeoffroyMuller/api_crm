@@ -18,6 +18,8 @@ export default class Event extends Model {
   idCompany?: number;
   company?: Company;
 
+  idProduct?: number;
+
   
   $formatJson(json: Pojo): Pojo {
     json = super.$formatJson(json)
