@@ -10,7 +10,7 @@ export default class Product extends Model {
   name?: string;
   description?: string;
   price?: number;
-  stockManagement?: "numerary" | "physical" | null;
+  stockManagement?: "numerary" | "physical" | null | "events";
   stock?: number;
 
   products_real?: Array<ProductReal>;
