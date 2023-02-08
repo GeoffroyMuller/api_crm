@@ -1,6 +1,6 @@
 import { Model, Pojo } from "objection";
 import Client from "../clients/client.model";
-import InvoiceLine from "./invoiceline.model";
+import InvoiceLine from "./invoice_line.model";
 import InvoicePayment from "./invoicepayment.model";
 import User from "../users/user.model";
 

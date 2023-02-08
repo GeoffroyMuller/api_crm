@@ -8,7 +8,7 @@ import PdfService from "../../core/services/pdf.service";
 import mailService from "../../core/services/mail.service";
 import { QueryBuilder, raw } from "objection";
 import InvoicePayment from "./invoicepayment.model";
-import InvoiceLine from "./invoiceline.model";
+import InvoiceLine from "./invoice_line.model";
 const fs = require("fs");
 let ejs = require("ejs");
 
