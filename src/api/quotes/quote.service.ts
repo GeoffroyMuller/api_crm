@@ -7,7 +7,7 @@ import serviceFactory from "../../core/service";
 import { merge } from "lodash";
 import { Service } from "../../core/types";
 import { raw } from "objection";
-import QuoteLine from "./quoteline.model";
+import QuoteLine from "./quote_line.model";
 const fs = require("fs");
 let ejs = require("ejs");
 

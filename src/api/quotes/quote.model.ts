@@ -1,7 +1,7 @@
 import { Model, Pojo } from "objection"
 import Client from "../clients/client.model";
 import Invoice from "../invoices/invoice.model";
-import QuoteLine from "./quoteline.model";
+import QuoteLine from "./quote_line.model";
 import User from "../users/user.model";
 import { orderBy } from "lodash";
 
