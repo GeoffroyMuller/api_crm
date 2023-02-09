@@ -183,4 +183,4 @@ quoteService.sendByMail = async (quote: Quote) => {
   }
 };
 
-export default quoteService as Service<Quote, User>;
+export default quoteService;
