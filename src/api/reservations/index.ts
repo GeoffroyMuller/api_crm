@@ -1,13 +1,13 @@
-
-const express = require('express');
+const express = require("express");
+import authMiddleware from "../auth/auth.middleware";
 import controller from "./reservation.controller";
 
-const router = express.Router()
+const router = express.Router();
 
-router.get('/', controller.getAll)
-router.post('/', controller.create)
-router.put('/:id', controller.update)
-router.delete('/:id', controller.delete)
-router.get('/:id', controller.getById) 
+router.get("/", authMiddleware, controller.getAll);
+router.post("/", authMiddleware, controller.create);
+router.put("/:id", authMiddleware, controller.update);
+router.delete("/:id", authMiddleware, controller.delete);
+router.get("/:id", authMiddleware, controller.getById);
 
 export default router;
