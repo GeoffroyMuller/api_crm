@@ -62,6 +62,7 @@ const quoteService = serviceFactory<Quote, User>(Quote, {
         order,
       }));
     }
+    data.idCompany = auth.idCompany;
     return { query, auth, filters, data };
   },
   async onBeforeCreate({ query, auth, filters, data }) {

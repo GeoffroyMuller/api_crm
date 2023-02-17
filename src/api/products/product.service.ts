@@ -1,4 +1,6 @@
+import { raw } from "objection";
 import serviceFactory from "../../core/service";
+import ProductReal from "../products_real/product_real.model";
 import User from "../users/user.model";
 import Product from "./product.model";
 
@@ -12,6 +14,12 @@ const productService = serviceFactory<Product, User>(Product, {
             query.where('idCompany', auth.idCompany);
         }
     }
+    query.select(`${Product.tableName}.*`);
+    query.select(raw(`(
+      SELECT COUNT(*)
+      FROM ${ProductReal.tableName}
+      WHERE ${ProductReal.tableName}.idProduct = ${Product.tableName}.id
+    )`).as("stock_physical"));
     return {query, auth, filters, data};
 },
   async onBeforeCreate({ query, auth, filters, data }) {
