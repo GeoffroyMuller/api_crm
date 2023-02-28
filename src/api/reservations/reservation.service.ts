@@ -1,3 +1,4 @@
+import { isNil } from "lodash";
 import serviceFactory from "../../core/service";
 import User from "../users/user.model";
 import Reservation from "./reservation.model";
@@ -13,6 +14,18 @@ const reservationService = serviceFactory<Reservation, User>(Reservation, {
       }
     }
     return { query, auth, filters, data };
+  },
+  async onBeforeCreate({ query, auth, filters, data }) {
+    delete data.client;
+    return {
+      query,
+      auth,
+      filters,
+      data: {
+        ...data,
+        idCompany: auth.idCompany,
+      },
+    };
   },
 });
 
