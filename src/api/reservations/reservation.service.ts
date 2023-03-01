@@ -36,9 +36,12 @@ reservationService.create = async (body: any, auth) => {
     auth,
   });
   await reservationService.checkAuthorization(data, auth);
-  return (await query.insertGraphAndFetch({
-    ...data,
-  })) as unknown as Reservation;
+  return (await query.upsertGraphAndFetch(
+    {
+      ...data,
+    },
+    { relate: true }
+  )) as unknown as Reservation;
 };
 
 reservationService.update = async (body: any, auth) => {
@@ -53,7 +56,7 @@ reservationService.update = async (body: any, auth) => {
       id: data.id,
       ...data,
     },
-    { relate: true, unrelate: true }
+    { relate: true }
   )) as unknown as Reservation;
 };
 
