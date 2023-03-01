@@ -94,12 +94,7 @@ const serviceFactory = <
       filters: any,
       auth: any
     ) => {
-      const query = model.query();
-      if (Array.isArray(relations)) {
-        for (const relation of relations) {
-          query.withGraphFetched(relation);
-        }
-      }
+      const query = applyRelations<T>(model.query(), model, relations);
       const { query: q, filters: f } = await onBeforeFetchList({
         query,
         filters,
@@ -113,12 +108,7 @@ const serviceFactory = <
       filters: any,
       auth: any
     ) => {
-      const query = model.query();
-      if (Array.isArray(relations)) {
-        for (const relation of relations) {
-          query.withGraphFetched(relation);
-        }
-      }
+      const query = applyRelations<T>(model.query(), model, relations);
       const { query: q, filters: f } = await onBeforeFetchList({
         query,
         filters,

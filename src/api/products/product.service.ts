@@ -8,20 +8,27 @@ const productService = serviceFactory<Product, User>(Product, {
   isAuthorized: async (model: Product | Object, user: User) => {
     return Product.fromJson(model)?.idCompany == user?.idCompany;
   },
-  async onBeforeFetchList({query, auth, filters, data}) {
+  async onBeforeFetchList({ query, auth, filters, data }) {
     if (auth != null) {
-        if (auth.idCompany) {
-            query.where('idCompany', auth.idCompany);
-        }
+      if (auth.idCompany) {
+        query.where("idCompany", auth.idCompany);
+      }
     }
     query.select(`${Product.tableName}.*`);
-    query.select(raw(`(
-      SELECT COUNT(*)
-      FROM ${ProductReal.tableName}
-      WHERE ${ProductReal.tableName}.idProduct = ${Product.tableName}.id
-    )`).as("stock_physical"));
-    return {query, auth, filters, data};
-},
+    const populateStockIndex = (
+      (filters?.populate || []) as string[]
+    ).findIndex((p) => p === "stock_physical");
+    if (populateStockIndex !== -1) {
+      query.select(
+        raw(`(
+        SELECT COUNT(*)
+        FROM ${ProductReal.tableName}
+        WHERE ${ProductReal.tableName}.idProduct = ${Product.tableName}.id
+      )`).as("stock_physical")
+      );
+    }
+    return { query, auth, filters, data };
+  },
   async onBeforeCreate({ query, auth, filters, data }) {
     return {
       query,
