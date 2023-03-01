@@ -18,12 +18,6 @@ export default class Client extends Model {
         return 'clients'
     }
 
-    static get jsonSchema() {
-        return {
-          required: ["idCompany"],
-        };
-    }
-
     static relationMappings = {
         company: {
             relation: Model.BelongsToOneRelation,
